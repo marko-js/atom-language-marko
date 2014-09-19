@@ -1,0 +1,17 @@
+'.text.html.marko':
+  # A
+  'For':
+    'prefix': 'for'
+    'body': '<for each="${1:item} in ${2:items}">$3</for>'
+  'ForAttr':
+    'prefix': 'for='
+    'body': 'for"${1:item} in ${2:items}"'
+  'AttrsAttr':
+    'prefix': 'attrs='
+    'body': 'attrs="${1:expr}"'
+  'If':
+    'prefix': 'if'
+    'body': '<if test="${1:condition}">$2</if>'
+  'IfAttr':
+    'prefix': 'if='
+    'body': 'if="${1:condition}"'
