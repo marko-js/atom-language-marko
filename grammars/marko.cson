@@ -356,6 +356,9 @@
     ]
   }
   {
+    'include': '#marko-variables'
+  }
+  {
     'include': '#entities'
   }
   {
@@ -375,22 +378,6 @@
     ]
   'entities':
     'patterns': [
-      {
-        'match': '(\\$!?)([_a-zA-Z]+(\\.[_a-zA-Z]+)*)'
-        'name': 'constant.character.entity.html.marko_variable'
-        'captures':
-          '1':
-            'name': 'punctuation.definition.entity.html.marko_variable_delim'
-      }
-      {
-        'match': '(\\$!?\\{)([^\\}]+)(\\})'
-        'name': 'constant.character.entity.html.marko_variable'
-        'captures':
-          '1':
-            'name': 'punctuation.definition.entity.html.marko_variable_delim'
-          '3':
-            'name': 'punctuation.definition.entity.html.marko_variable_delim'
-      }
       {
         'match': '(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)'
         'name': 'constant.character.entity.html'
@@ -452,6 +439,9 @@
         'include': '#embedded-code'
       }
       {
+        'include': '#marko-variables'
+      }
+      {
         'include': '#entities'
       }
     ]
@@ -468,6 +458,9 @@
     'patterns': [
       {
         'include': '#embedded-code'
+      }
+      {
+        'include': '#marko-variables'
       }
       {
         'include': '#entities'
@@ -505,6 +498,9 @@
             'include': '#embedded-code'
           }
           {
+            'include': '#marko-variables'
+          }
+          {
             'include': '#entities'
           }
         ]
@@ -523,6 +519,9 @@
         'patterns': [
           {
             'include': '#embedded-code'
+          }
+          {
+            'include': '#marko-variables'
           }
           {
             'include': '#entities'
@@ -556,6 +555,64 @@
       {
         'include': '#unquoted-attribute'
       }
+    ]
+  'marko-variables':
+    'patterns': [
+      {
+        'match': '(\\$!?)([_a-zA-Z]+(\\.[_a-zA-Z]+)*)'
+        'name': 'constant.character.entity.html.marko_variable'
+        'captures':
+          '1':
+            'name': 'punctuation.definition.entity.html.marko_variable_delim'
+      }
+      {
+        'begin': '(\\$!?\\{)'
+        'beginCaptures':
+          '1':
+            'name': 'punctuation.definition.entity.html.marko_variable_delim'
+        'end': '(\\})'
+        'endCaptures':
+          '1':
+            'name': 'punctuation.definition.entity.html.marko_variable_delim'
+        'name': 'constant.character.entity.html.marko_variable',
+        'patterns': [
+          {
+            'include': '#string-double-quoted'
+          }
+          {
+            'include': '#string-single-quoted'
+          }
+          {
+            'include': '#js-object'
+          }
+        ]
+      }
+    ]
+  'js-object':
+    'patterns': [
+      'begin': '(\\{)'
+      'beginCaptures':
+          '0':
+            'name': 'keyword.operator',
+      'end': '(\\})'
+      'endCaptures':
+          '0':
+            'name': 'keyword.operator',
+      'patterns': [
+        {
+          'include': '#string-double-quoted'
+        }
+        {
+          'include': '#string-single-quoted'
+        }
+        {
+          'match': '[:]'
+          'name': 'keyword.operator'
+        }
+        {
+          'include': '#js-object'
+        }
+      ]
     ]
   'unquoted-attribute':
     'match': '(?<==)(?:[^\\s<>/\'"]|/(?!>))+'
