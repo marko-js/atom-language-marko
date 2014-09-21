@@ -3,7 +3,7 @@
   'marko'
 ]
 'firstLineMatch': '<(?i:(!DOCTYPE\\s*)?html)'
-'name': 'HTML'
+'name': 'Marko'
 'patterns': [
   {
     'begin': '(<)([a-zA-Z0-9:-]++)(?=[^>]*></\\2>)'
@@ -536,7 +536,7 @@
     'patterns': [
       {
         'include': '#tag-marko-attribute'
-      }      
+      }
       {
         'include': '#tag-id-attribute'
       }
