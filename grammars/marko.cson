@@ -470,7 +470,7 @@
     'match': '(?<=[^=])\\b([a-zA-Z0-9:-]+)'
     'name': 'entity.other.attribute-name.html'
   'tag-marko-attribute':
-    'match': '(?<=[^=])\\b(if|for|else|else-if|attrs)'
+    'match': '(?<=[^=])\\b(if|for|else|else-if|attrs|w-bind|w-el-id|w-id)'
     'name': 'support.function.marko_attribute'
   'tag-id-attribute':
     'begin': '\\b(id)\\b\\s*(=)'
