@@ -254,7 +254,7 @@
     ]
   }
   {
-    'begin': '(</?)((?i:for|if|else|else-if|var|require|def|invoke|include|with)\\b)'
+    'begin': '(</?)((?i:for|if|else-if|else|var|require|def|invoke|include|with)\\b)'
     'captures':
       '1':
         'name': 'punctuation.definition.tag.html'
@@ -470,8 +470,12 @@
     'match': '(?<=[^=])\\b([a-zA-Z0-9:-]+)'
     'name': 'entity.other.attribute-name.html'
   'tag-marko-attribute':
-    'match': '(?<=[^=])\\b(if|for|else|else-if|attrs|w-bind|w-el-id|w-id)'
-    'name': 'support.function.marko_attribute'
+    'match': '(?<=[^=])\\b((if|for|else-if|attrs|w-bind|w-el-id|w-id)\\s*=|(else)\\b)'
+    'captures':
+      '2':
+        'name': 'support.function.marko_attribute'
+      '3':
+        'name': 'support.function.marko_attribute'
   'tag-id-attribute':
     'begin': '\\b(id)\\b\\s*(=)'
     'captures':
