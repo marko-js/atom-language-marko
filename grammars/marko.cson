@@ -563,7 +563,7 @@
   'marko-variables':
     'patterns': [
       {
-        'match': '(\\$!?)([_a-zA-Z]+(\\.[_a-zA-Z]+)*)'
+        'match': '(\\$!?)([_a-zA-Z]+(\\.[_a-z0-9A-Z]+)*)'
         'name': 'constant.character.entity.html.marko_variable'
         'captures':
           '1':
