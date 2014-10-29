@@ -1,0 +1,31 @@
+{
+    "marko": {
+        "extends": "html",
+        "snippets": {
+            "for": "<for each=\"${1:item} in ${2:items}\">$3</for>",
+            "for=": "for\"${1:item} in ${2:items}\"",
+            "attrs=": "attrs=\"${1:expr}\"",
+            "if": "<if test=\"${1:condition}\">$2</if>",
+            "if=": "if=\"${1:condition}\"",
+            "else-if": "<else-if test=\"${1:condition}\">$2</else-if>",
+            "else-if=": "else-if=\"${1:condition}\"",
+            "else": "<else>$1</else>",
+            "var": "<var name=\"${1:name}\" value=\"$2\"/>",
+            "assign": "<assign var=\"${1:var}\" value=\"$2\"/>",
+            "require": "<require module=\"${1:module}\" var=\"$2\"/>",
+            "op": "<optimizer-page package-path=\"${1:./optimizer.json}\"/>",
+            "oh": "<optimizer-head/>",
+            "ob": "<optimizer-body/>",
+            "use": "<layout-use template=\"${1:./path/to/template.marko}\">\n    <layout-put into=\"${2:target}\">\n        ${3:content}\n    </layout-put>\n</layout-use>",
+            "placeholder": "<layout-placeholder name=\"${1:name}\"/>",
+            "put": "<layout-put into=\"${1:name}\"/>",
+            "async": "<async-fragment data-provider=\"${1:data.myDataProvider}\" var=\"${2:varName}\">\n    ${3:}\n</async-fragment>",
+            "bind": "w-bind=\"${1:./widget}\"",
+            "include": "<include template=\"${1:./path/to/template.marko}\"/>",
+            "?": "{?${1:expression};${2:trueTemplate};${3:falseTemplate}}",
+            "def": "<def function=\"${1:name}(${2:params})\">\n    ${3:}\n</def>",
+            "invoke": "<invoke function=\"${1:name}\" ${2:arg1Name}=\"${3:arg1Value}\"/>",
+            "comment": "<html-comment>$1</html-comment"
+        }
+    }
+}
