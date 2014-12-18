@@ -254,7 +254,7 @@
     ]
   }
   {
-    'begin': '(</?)((?i:for|if|else-if|else|var|require|def|invoke|include|with)\\b)'
+    'begin': '(</?)((?i:for|if|else-if|else|var|require|def|invoke|include|with|app)\\b)'
     'captures':
       '1':
         'name': 'punctuation.definition.tag.html'
