@@ -254,21 +254,6 @@
     ]
   }
   {
-    'begin': '(</?)((?i:for|if|else-if|else|var|require|def|invoke|include|with|app)\\b)'
-    'captures':
-      '1':
-        'name': 'punctuation.definition.tag.html'
-      '2':
-        'name': 'support.function.marko_tag'
-    'end': '(>)'
-    'name': 'meta.tag.structure.any.html'
-    'patterns': [
-      {
-        'include': '#tag-stuff'
-      }
-    ]
-  }
-  {
     'begin': '(</?)((?i:body|head|html)\\b)'
     'captures':
       '1':
@@ -331,6 +316,21 @@
       '1':
         'name': 'punctuation.definition.tag.end.html'
     'name': 'meta.tag.other.html'
+    'patterns': [
+      {
+        'include': '#tag-stuff'
+      }
+    ]
+  }
+  {
+    'begin': '(</?)((?i:for|if|else-if|else|var|require|def|invoke|include|with|app)\\b)'
+    'captures':
+      '1':
+        'name': 'punctuation.definition.tag.html'
+      '2':
+        'name': 'support.function.marko_tag'
+    'end': '(>)'
+    'name': 'meta.tag.structure.any.html'
     'patterns': [
       {
         'include': '#tag-stuff'
