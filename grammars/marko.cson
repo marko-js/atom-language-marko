@@ -470,7 +470,7 @@
     'match': '(?<=[^=])\\b([a-zA-Z0-9:-]+)'
     'name': 'entity.other.attribute-name.html'
   'tag-marko-attribute':
-    'match': '(?<=[^=])\\b((if|for|else-if|body-only-if|attrs|w-bind|w-extend|w-config|w-el-id|w-for|w-id)\\s*=|(else)\\b)'
+    'match': '(?<=[^=])\\b((if|for|else-if|body-only-if|attrs|w-bind|w-extend|w-config|w-el-id|w-for|w-id|w-on[a-zA-Z0-9-]+)\\s*=|(else)\\b)'
     'captures':
       '2':
         'name': 'support.function.marko_attribute'
