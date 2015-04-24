@@ -6,7 +6,7 @@
 'name': 'Marko'
 'patterns': [
   {
-    'begin': '(<)([a-zA-Z0-9:-]++)(?=[^>]*></\\2>)'
+    'begin': '(<)([a-zA-Z0-9:.-]++)(?=[^>]*></\\2>)'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.tag.html'
@@ -305,7 +305,7 @@
     ]
   }
   {
-    'begin': '(</?)([a-zA-Z0-9:]+-[a-zA-Z0-9:-]+)'
+    'begin': '(</?)([a-zA-Z0-9:]+-[a-zA-Z0-9:.-]+)'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.tag.begin.html'
@@ -470,7 +470,7 @@
     'match': '(?<=[^=])\\b([a-zA-Z0-9:-]+)'
     'name': 'entity.other.attribute-name.html'
   'tag-marko-attribute':
-    'match': '(?<=[^=])\\b((if|for|else-if|body-only-if|attrs|w-bind|w-extend|w-config|w-el-id|w-for|w-id|w-on[a-zA-Z0-9-]+)\\s*=|(else|w-bind|w-extend|w-preserve-body|w-preserve)\\b)'
+    'match': '(?<=[^=])\\b((if|for|else-if|body-only-if|attrs|w-bind|w-extend|w-config|w-body|w-el-id|w-for|w-id|c-space|w-on[a-zA-Z0-9-]+)\\s*=|(else|w-bind|w-extend|w-preserve-body|w-preserve|w-body)\\b)'
     'captures':
       '2':
         'name': 'support.function.marko_attribute'
