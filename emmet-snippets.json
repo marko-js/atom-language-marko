@@ -7,6 +7,8 @@
             "attrs=": "attrs=\"${1:expr}\"",
             "if": "<if test=\"${1:condition}\">$2</if>",
             "@if": "if=\"${1:condition}\"",
+            "unless": "<unless test=\"${1:condition}\">$2</unless>",
+            "@unless": "unless=\"${1:condition}\"",
             "else-if": "<else-if test=\"${1:condition}\">$2</else-if>",
             "@else-if": "else-if=\"${1:condition}\"",
             "else": "<else>$1</else>",
