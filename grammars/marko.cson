@@ -68,28 +68,10 @@ repository:
         match: "[=]"
       }
       {
-        include: "#expression-string-single"
-      }
-      {
-        include: "#expression-string-double"
-      }
-      {
-        include: "#expression-group-parens"
-      }
-      {
-        include: "#expression-group-brackets"
-      }
-      {
-        include: "#expression-group-braces"
+        include: "#expression-common"
       }
       {
         include: "#expression-operator-no-gt"
-      }
-      {
-        include: "#expression-special-class"
-      }
-      {
-        include: "#expression-special-operator"
       }
       {
         include: "#placeholder"
@@ -134,6 +116,16 @@ repository:
     comment: "A JavaScript expression"
     patterns: [
       {
+        include: "#expression-common"
+      }
+      {
+        include: "#expression-operator"
+      }
+    ]
+  "expression-common":
+    comment: "A JavaScript expression"
+    patterns: [
+      {
         include: "#expression-string-single"
       }
       {
@@ -149,7 +141,13 @@ repository:
         include: "#expression-group-braces"
       }
       {
-        include: "#expression-operator"
+        include: "#expression-constant"
+      }
+      {
+        include: "#expression-hex"
+      }
+      {
+        include: "#expression-numeric"
       }
       {
         include: "#expression-special-class"
@@ -158,6 +156,21 @@ repository:
         include: "#expression-special-operator"
       }
     ]
+  "expression-constant":
+    captures:
+      "1":
+        name: "constant.language.boolean.true.js"
+      "2":
+        name: "constant.language.boolean.false.js"
+      "3":
+        name: "constant.language.infinity.js"
+      "4":
+        name: "constant.language.nan.js"
+      "5":
+        name: "constant.language.null.js"
+      "6":
+        name: "constant.language.undefined.js"
+    match: "(true)|(false)|(Infinity)|(NaN)|(null)|(undefined)"
   "expression-group-braces":
     begin: "\\["
     beginCaptures:
@@ -200,6 +213,24 @@ repository:
         include: "#expression"
       }
     ]
+  "expression-hex":
+    match: "\\b0[xX]\\h+\\b"
+    name: "constant.numeric.hex.js"
+  "expression-numeric":
+    match: '''
+      (?x)
+      				(?<!\\w)									# Ensure word boundry
+      				(?>
+      					(
+      						(0|[1-9][0-9]*)(\\.[0-9]*)?		# 0 or 1 or 1. or 1.0
+      					  | \\.[0-9]+						# .1
+      					)
+      					([eE][+-]?[0-9]+)?					# Exponent
+      				)
+      				(?!\\w)									# Ensure word boundry
+      			
+    '''
+    name: "constant.numeric.js"
   "expression-operator":
     match: "!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\\|\\||\\?\\:|\\*=|(?<!\\()/=|%=|\\+=|\\-=|&=|\\^="
     name: "keyword.operator.js"
@@ -368,16 +399,7 @@ repository:
       }
     ]
   "tag-concise":
-    begin: "^\\s*(?=[a-zA-Z0-9_.#-])"
-    comment: "Concise tag"
-    end: "$"
     patterns: [
-      {
-        include: "#html-line-concise"
-      }
-      {
-        include: "#attr-stuff"
-      }
       {
         include: "#tag-name-custom-concise"
       }
@@ -411,17 +433,35 @@ repository:
       }
     ]
   "tag-name-concise":
-    captures:
+    begin: "^\\s*([a-zA-Z0-9_.#-]+)(?=(\\s|$|\\())"
+    beginCaptures:
       "1":
         name: "entity.name.tag"
     comment: "A concise tag name"
-    match: "([a-zA-Z0-9_#.]+)(?=(\\s|$|\\())"
+    end: "$"
+    patterns: [
+      {
+        include: "#html-line-concise"
+      }
+      {
+        include: "#attr-stuff"
+      }
+    ]
   "tag-name-custom-concise":
-    captures:
-      "0":
-        name: "support.function.marko-tag"
+    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[#.][a-zA-Z0-9_#.-]+|[a-zA-Z0-9_#.]+([:-])[a-zA-Z0-9_:-]+)(?=(\\s|$|\\())"
+    beginCaptures:
+      "1":
+        name: "entity.name.tag"
     comment: "A concise custom tag name"
-    match: "(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[#.][a-zA-Z0-9_#.-]+|[a-zA-Z0-9_#.]+([:-])[a-zA-Z0-9_:-]+)(?=(\\s|$|\\())"
+    end: "$"
+    patterns: [
+      {
+        include: "#html-line-concise"
+      }
+      {
+        include: "#attr-stuff"
+      }
+    ]
   "tag-name-custom-html":
     begin: "<(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
