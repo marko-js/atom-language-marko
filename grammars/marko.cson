@@ -302,11 +302,14 @@ repository:
         include: "#tag-html"
       }
       {
+        include: "#comment-html"
+      }
+      {
         include: "#placeholder"
       }
     ]
   "html-line-concise":
-    begin: "\\s+(-)"
+    begin: "\\s*(-)"
     beginCaptures:
       "1":
         name: "punctuation.separator"
@@ -314,6 +317,9 @@ repository:
     patterns: [
       {
         include: "#tag-html"
+      }
+      {
+        include: "#comment-html"
       }
       {
         include: "#placeholder"
