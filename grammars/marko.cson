@@ -16,6 +16,9 @@ patterns: [
     include: "#html-line-concise"
   }
   {
+    include: "#cdata"
+  }
+  {
     include: "#doctype"
   }
   {
@@ -77,6 +80,16 @@ repository:
         include: "#placeholder"
       }
     ]
+  cdata:
+    begin: "<!\\[CDATA\\["
+    beginCaptures:
+      "0":
+        name: "punctuation.definition.string.begin.xml"
+    end: "]]>"
+    endCaptures:
+      "0":
+        name: "punctuation.definition.string.end.xml"
+    name: "string.unquoted.cdata.xml"
   "comment-concise":
     begin: "^(\\s*)//"
     comment: "Single line comment (concise)"
@@ -299,6 +312,9 @@ repository:
     name: "meta.section.marko-html-block"
     patterns: [
       {
+        include: "#cdata"
+      }
+      {
         include: "#tag-html"
       }
       {
@@ -316,6 +332,9 @@ repository:
     end: "$"
     patterns: [
       {
+        include: "#cdata"
+      }
+      {
         include: "#tag-html"
       }
       {
@@ -330,6 +349,9 @@ repository:
     comment: "Concise style tag with CSS code."
     end: "(?=</)"
     patterns: [
+      {
+        include: "#cdata"
+      }
       {
         include: "#comment-html"
       }
@@ -368,7 +390,7 @@ repository:
       }
     ]
   placeholder:
-    begin: "\\$\\{"
+    begin: "[$][!]?\\{"
     captures:
       "0":
         name: "keyword.operator.js"
