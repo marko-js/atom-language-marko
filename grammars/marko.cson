@@ -34,7 +34,7 @@ patterns: [
     include: "#tag-html"
   }
   {
-    include: "#placeholder"
+    include: "#placeholder-patterns"
   }
   {
     include: "#scriptlet"
@@ -56,7 +56,19 @@ repository:
         captures:
           "1":
             name: "support.function.marko-attribute"
-        match: "\\s(for|if|else-if|w-[a-zA-Z0-9:_-]+|marko-[a-zA-Z0-9:_.-]+lasso-[a-zA-Z0-9:_.-]+)(?=(\\s|$|[>(]|/>))"
+        match: "\\s(for|if|else-if|unless)(?=([(]))"
+      }
+      {
+        captures:
+          "1":
+            name: "support.function.marko-attribute"
+        match: "\\s(else|w-[a-zA-Z0-9:_-]+|marko-[a-zA-Z0-9:_.-]+)(?=(\\s|$|[>(]|/>))"
+      }
+      {
+        captures:
+          "1":
+            name: "support.function.marko-attribute"
+        match: "\\s(w-[a-zA-Z0-9:_-]+|lasso-[a-zA-Z0-9:_.-]+)(?=(\\s|$|[>(=]|/>))"
       }
       {
         captures:
@@ -272,7 +284,7 @@ repository:
         name: "constant.character.escape.js"
       }
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
     ]
   "expression-string-single":
@@ -291,7 +303,7 @@ repository:
         name: "constant.character.escape.js"
       }
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
     ]
   "expression-ternary-if":
@@ -321,7 +333,7 @@ repository:
         include: "#comment-html"
       }
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
     ]
   "html-line-concise":
@@ -341,7 +353,7 @@ repository:
         include: "#comment-html"
       }
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
     ]
   "open-tag-end":
@@ -359,7 +371,7 @@ repository:
         include: "#tag-html"
       }
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
       {
         include: "#scriptlet"
@@ -371,7 +383,7 @@ repository:
     end: "(?=</)"
     patterns: [
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
       {
         include: "source.js"
@@ -383,7 +395,7 @@ repository:
     end: "(?=</)"
     patterns: [
       {
-        include: "#placeholder"
+        include: "#placeholder-patterns"
       }
       {
         include: "source.css"
@@ -400,6 +412,24 @@ repository:
     patterns: [
       {
         include: "#expression"
+      }
+    ]
+  "placeholder-escaped":
+    comment: "\\${"
+    match: "\\\\[$][!]?[{]"
+  "placeholder-escaped-escaped":
+    comment: "\\\\${"
+    match: "\\\\\\\\(?=[$][!]?[{])"
+  "placeholder-patterns":
+    patterns: [
+      {
+        include: "#placeholder-escaped-escaped"
+      }
+      {
+        include: "#placeholder-escaped"
+      }
+      {
+        include: "#placeholder"
       }
     ]
   scriptlet:
