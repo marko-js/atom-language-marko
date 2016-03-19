@@ -1,32 +1,8 @@
-// The ui-variables file is provided by base themes provided by Atom.
-//
-// See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
-// for a full listing of what's available.
-/* @import "ui-variables"; */
+// The syntax variables are provided by the applied syntax theme
+// See https://github.com/atom/one-dark-syntax/blob/master/styles/syntax-variables.less
 
-.marko-attribute {
-    background-color: rgba(255, 255, 0, 0.05);
-    font-weight: bold;
-    // text-decoration: underline;
-}
-
-.marko-tag {
-    background-color: rgba(255, 255, 0, 0.05);
-    font-weight: bold;
-    // text-decoration: underline;
-}
-
-.marko_variable {
-    background-color: rgba(0, 255, 0, 0.1);
-    // font-weight: bold;
-}
-
+.marko-tag,
+.marko-attribute,
 .marko-placeholder {
-    background-color: rgba(0, 255, 0, 0.1);
-    // font-weight: bold;
+    color: @syntax-color-method !important;
 }
-
-// .marko_attribute {
-//     background-color: @syntax-text-color;
-//     color: @syntax-background-color;
-// }
