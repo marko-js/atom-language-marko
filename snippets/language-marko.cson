@@ -1,81 +1,95 @@
-'.text.html.marko':
-  # A
-  'For':
-    'prefix': 'for'
-    'body': '<for each="${1:item} in ${2:items}">$3</for>'
-  'ForAttr':
-    'prefix': 'for='
-    'body': 'for"${1:item} in ${2:items}"'
-  'AttrsAttr':
-    'prefix': 'attrs='
-    'body': 'attrs="${1:expr}"'
-  'If':
-    'prefix': 'if'
-    'body': '<if test="${1:condition}">$2</if>'
-  'IfAttr':
-    'prefix': 'if='
-    'body': 'if="${1:condition}"'
-  'Unless':
-    'prefix': 'unless'
-    'body': '<unless test="${1:condition}">$2</unless>'
-  'UnlessAttr':
-    'prefix': 'unless='
-    'body': 'unless="${1:condition}"'
-  'ElseIf':
-    'prefix': 'else-if'
-    'body': '<else-if test="${1:condition}">$2</else-if>'
-  'ElseIfAttr':
-    'prefix': 'else-if='
-    'body': 'else-if="${1:condition}"'
-  'Else':
-    'prefix': 'else'
-    'body': '<else>$1</else>'
-  'Var':
-    'prefix': 'var'
-    'body': '<var name="${1:name}" value="$2"/>'
-  'Assign':
-    'prefix': 'assign'
-    'body': '<assign var="${1:var}" value="$2"/>'
-  'Require':
-    'prefix': 'require'
-    'body': '<require module="${1:module}" var="$2"/>'
-  'OptimizerPage':
-    'prefix': 'op'
-    'body': '<optimizer-page package-path="${1:./optimizer.json}"/>'
-  'OptimizerHead':
-    'prefix': 'oh'
-    'body': '<optimizer-head/>'
-  'OptimizerBody':
-    'prefix': 'ob'
-    'body': '<optimizer-body/>'
-  'LayoutUse':
-    'prefix': 'use'
-    'body': '<layout-use template="${1:./path/to/template.marko}">\n    <layout-put into="${2:target}">\n        ${3:content}\n    </layout-put>\n</layout-use>'
-  'LayoutPlaceholder':
-    'prefix': 'placeholder'
-    'body': '<layout-placeholder name="${1:name}"/>'
-  'LayoutPut':
-    'prefix': 'put'
-    'body': '<layout-put into="${1:name}"/>'
-  'AsyncFragment':
-    'prefix': 'async'
-    'body': '<async-fragment data-provider="${1:data.myDataProvider}" var="${2:varName}">\n    ${3:}\n</async-fragment>'
-  'WidgetBindAttr':
-    'prefix': 'bind'
-    'body': 'w-bind="${1:./widget}"'
-  'Include':
-    'prefix': 'include'
-    'body': '<include template="${1:./path/to/template.marko}"/>'
-  'ShorthandConditional':
-    'prefix': '?'
-    'body': '{?${1:expression};${2:trueTemplate};${3:falseTemplate}}'
-  'Def':
-    'prefix': 'def'
-    'body': '<def function="${1:name}(${2:params})">\n    ${3:}\n</def>'
-  'Invoke':
-    'prefix': 'invoke'
-    'body': '<invoke function="${1:name}" ${2:arg1Name}="${3:arg1Value}"/>'
-  'Comment':
-    'prefix': 'comment'
-    'body': '<html-comment>$1</html-comment'
-
+'.marko':
+    # A
+    'For':
+        'prefix': 'for'
+        'body': '<for(${1:item} in ${2:items})>$3</for>'
+    'ForAttr':
+        'prefix': 'for='
+        'body': 'for(${1:item} in ${2:items})'
+    'If':
+        'prefix': 'if'
+        'body': '<if(${1:condition})>$2</if>'
+    'IfAttr':
+        'prefix': 'if='
+        'body': 'if(${1:condition})'
+    'Unless':
+        'prefix': 'unless'
+        'body': '<unless(${1:condition})>$2</unless>'
+    'UnlessAttr':
+        'prefix': 'unless='
+        'body': 'unless(${1:condition})'
+    'ElseIf':
+        'prefix': 'else-if'
+        'body': '<else-if(${1:condition})>$2</else-if>'
+    'ElseIfAttr':
+        'prefix': 'else-if='
+        'body': 'else-if(${1:condition})'
+    'Else':
+        'prefix': 'else'
+        'body': '<else>$1</else>'
+    'ShorthandConditional':
+        'prefix': '?'
+        'body': '(${1:expression} ? ${2:trueTemplate} : ${3:falseTemplate})'
+    'Var':
+        'prefix': 'var'
+        'body': '<var ${1:name}=${2:abc} />'
+    'Assign':
+        'prefix': 'assign'
+        'body': '<assign ${1:name}=${2:xyz} />'
+    'Require':
+        'prefix': 'require'
+        'body': 'var ${1:name} = require(\'${2:./path-to-helpers}\');'
+    'Include':
+        'prefix': 'include'
+        'body': '<include(\'${1:./path/to/template.marko}\'/>'
+    'Macro':
+        'prefix': 'macro'
+        'body': """
+                <macro ${1:fooFunc}(${2:arg})>
+                    ${3:content}
+                </macro>
+                """
+    'Comment':
+        'prefix': 'comment'
+        'body': '<html-comment>$1</html-comment>'
+    'MarkoInit':
+        'prefix': 'init'
+        'body': """
+                <script marko-init>
+                    var ${1:name} = require('${2:./path-to-helpers}');
+                </script>
+                """
+    'LayoutUse':
+        'prefix': 'use'
+        'body': """
+                    <layout-use(${1:./path/to/template.marko})>
+                        <layout-put into="${2:target}">
+                            ${3:content}
+                        </layout-put>
+                    </layout-use>
+                """
+    'LayoutPlaceholder':
+        'prefix': 'placeholder'
+        'body': '<layout-placeholder name="${1:name}"/>'
+    'LayoutPut':
+        'prefix': 'put'
+        'body': '<layout-put into="${1:name}"/>'
+    'AsyncFragment':
+        'prefix': 'async'
+        'body': """
+                    <async-fragment data-provider=${1:data.myDataProvider} var="${2:varName}">
+                        ${3:}
+                    </async-fragment>
+                """
+    'WidgetBindAttr':
+        'prefix': 'bind'
+        'body': 'w-bind="${1:./widget}"'
+    'OptimizerPage':
+        'prefix': 'op'
+        'body': '<optimizer-page package-path="${1:./optimizer.json}"/>'
+    'OptimizerHead':
+        'prefix': 'oh'
+        'body': '<optimizer-head/>'
+    'OptimizerBody':
+        'prefix': 'ob'
+        'body': '<optimizer-body/>'
