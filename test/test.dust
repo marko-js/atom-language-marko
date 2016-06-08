@@ -1,5 +1,0 @@
-{@testadTest a="b" asf="test"}
-    <div id="sfsdf {a}  sdfsadf">
-
-    </div>
-{/testadTest}
