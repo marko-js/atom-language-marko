@@ -494,7 +494,7 @@ repository:
     begin: "^\\s*([a-zA-Z0-9_.#-]+)(?=(\\s|$|\\())"
     beginCaptures:
       "1":
-        name: "entity.name.tag"
+        name: "entity.name.tag.concise"
     comment: "A concise tag name"
     end: "$"
     patterns: [
@@ -506,10 +506,10 @@ repository:
       }
     ]
   "tag-name-custom-concise":
-    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[#.][a-zA-Z0-9_#.-]+|[a-zA-Z0-9_#.]+([:-])[a-zA-Z0-9_:-]+)(?=(\\s|$|[(]))"
+    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[#.][a-zA-Z0-9_#.-]+|[a-zA-Z0-9_#.]+([:-])[a-zA-Z0-9_:-]*)(?=(\\s|$|[(]))"
     beginCaptures:
       "1":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.concise"
     comment: "A concise custom tag name"
     end: "$"
     patterns: [
@@ -521,15 +521,15 @@ repository:
       }
     ]
   "tag-name-custom-html":
-    begin: "<(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]+)(?=(>|/>|\\s|\\())"
+    begin: "<(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]*)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
     comment: "The beginning of a custom/special HTML tag"
     end: "</(\\1)>|</>|/>"
     endCaptures:
       "1":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -542,12 +542,12 @@ repository:
     begin: "<([a-zA-Z0-9]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "entity.name.tag"
+        name: "entity.name.tag.html"
     comment: "The beginning of a regular HTML tag in non-concise mode"
     end: "</(\\1)>|</>|/>"
     endCaptures:
       "1":
-        name: "entity.name.tag"
+        name: "entity.name.tag.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -560,12 +560,12 @@ repository:
     begin: "<(base|br|col|hr|embed|img|input|keygen|link|meta|param|source|track|wbr|lasso-img)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "entity.name.tag"
+        name: "entity.name.tag.html"
     comment: "HTML tags that are open tag only"
     end: ">|/>"
     endCaptures:
       "1":
-        name: "entity.name.tag"
+        name: "entity.name.tag.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -575,12 +575,12 @@ repository:
     begin: "<(script)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "entity.name.tag.script"
+        name: "entity.name.tag.script.html"
     comment: "HTML style tag"
     end: "</(script)>|</>|/>"
     endCaptures:
       "1":
-        name: "entity.name.tag.script"
+        name: "entity.name.tag.script.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -593,14 +593,14 @@ repository:
     begin: "<(([a-zA-Z0-9_-]+)[#.][a-zA-Z0-9_#.:-]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "support.function.marko-tag"
-    comment: "HTML style tag"
+        name: "support.function.marko-tag.html"
+    comment: "HTML tag with shorthand ID/class parts"
     end: "</(\\1)>|</(\\2)>|</>|/>"
     endCaptures:
       "1":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
       "2":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -613,14 +613,14 @@ repository:
     begin: "<([#.][a-zA-Z0-9_#.:-]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
     comment: "HTML style tag"
     end: "</(\\1)>|</>|</(div)>|/>"
     endCaptures:
       "1":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
       "2":
-        name: "support.function.marko-tag"
+        name: "support.function.marko-tag.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -633,12 +633,12 @@ repository:
     begin: "<(style)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "entity.name.tag.style"
+        name: "entity.name.tag.style.html"
     comment: "HTML style tag"
     end: "</(style)>|</>|/>"
     endCaptures:
       "1":
-        name: "entity.name.tag.style"
+        name: "entity.name.tag.style.html"
     patterns: [
       {
         include: "#attr-stuff"
@@ -669,7 +669,7 @@ repository:
     begin: "^(\\s*)(script)(?=(\\s|$|\\())"
     beginCaptures:
       "2":
-        name: "entity.name.tag.script.marko"
+        name: "entity.name.tag.script.marko.concise"
     comment: "HTML script tag with nested JavaScript code"
     end: "^(?!(\\1\\s)|\\s*$)"
     name: "meta.tag.other"
@@ -706,7 +706,7 @@ repository:
     begin: "^(\\s*)(style)(?=(\\s|$|\\())"
     beginCaptures:
       "2":
-        name: "entity.name.tag.style.marko"
+        name: "entity.name.tag.style.marko.concise"
     comment: "style tag with CSS code."
     end: "^(?!(\\1\\s)|\\s*$)"
     name: "meta.tag.other"
