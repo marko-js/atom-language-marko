@@ -491,10 +491,12 @@ repository:
       }
     ]
   "tag-name-concise":
-    begin: "^\\s*([a-zA-Z0-9_.#-]+)(?=(\\s|$|\\())"
+    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_-]*)?)(?=(\\s|$|\\())"
     beginCaptures:
       "1":
         name: "entity.name.tag.concise"
+      "3":
+        name: "entity.other.attribute-name.shorthand"
     comment: "A concise tag name"
     end: "$"
     patterns: [
@@ -506,7 +508,7 @@ repository:
       }
     ]
   "tag-name-custom-concise":
-    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[#.][a-zA-Z0-9_#.-]+|[a-zA-Z0-9_#.]+([:-])[a-zA-Z0-9_:-]*)(?=(\\s|$|[(]))"
+    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*)(?=(\\s|$|[(]))"
     beginCaptures:
       "1":
         name: "support.function.marko-tag.concise"
@@ -590,17 +592,21 @@ repository:
       }
     ]
   "tag-name-shorthand-html":
-    begin: "<(([a-zA-Z0-9_-]+)[#.][a-zA-Z0-9_#.:-]+)(?=(>|/>|\\s|\\())"
+    begin: "<(([a-zA-Z0-9_-]+)([#.][a-zA-Z0-9_#.:-]+))(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "support.function.marko-tag.html"
+        name: "entity.name.tag.html"
+      "3":
+        name: "entity.other.attribute-name.shorthand"
     comment: "HTML tag with shorthand ID/class parts"
-    end: "</(\\1)>|</(\\2)>|</>|/>"
+    end: "</(\\2)>|</(\\2(\\3))>|</>|/>"
     endCaptures:
       "1":
-        name: "support.function.marko-tag.html"
+        name: "entity.name.tag.html"
       "2":
-        name: "support.function.marko-tag.html"
+        name: "entity.name.tag.html"
+      "3":
+        name: "entity.other.attribute-name.shorthand"
     patterns: [
       {
         include: "#attr-stuff"
