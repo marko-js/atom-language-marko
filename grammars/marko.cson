@@ -491,7 +491,7 @@ repository:
       }
     ]
   "tag-name-concise":
-    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_-]*)?)(?=(\\s|$|\\())"
+    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_.#-]*)?)(?=(\\s|$|\\())"
     beginCaptures:
       "1":
         name: "entity.name.tag.concise"
