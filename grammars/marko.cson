@@ -508,7 +508,7 @@ repository:
       }
     ]
   "tag-name-custom-concise":
-    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*)(?=(\\s|$|[(]))"
+    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*)(?=(\\s|$|[(]))"
     beginCaptures:
       "1":
         name: "support.function.marko-tag.concise"
@@ -523,7 +523,7 @@ repository:
       }
     ]
   "tag-name-custom-html":
-    begin: "<(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]*)(?=(>|/>|\\s|\\())"
+    begin: "<(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]*)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
         name: "support.function.marko-tag.html"
