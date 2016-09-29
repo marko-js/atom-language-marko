@@ -1,0 +1,4 @@
+exports.TAG = 'TAG';
+exports.ATTR_NAME = 'ATTR_NANE';
+exports.ATTR_NAME_VALUE_SEPARATOR = 'ATTR_NAME_VALUE_SEPARATOR';
+exports.STRING = 'STRING';

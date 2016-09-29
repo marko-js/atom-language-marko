@@ -1,0 +1,451 @@
+{
+    "a": {
+        "autocomplete": [
+            {
+            },
+            {
+                "displayText": "a href=\"\"",
+                "snippet": "a href=\"${1:#}\""
+            },
+            {
+                "snippet": "a name=\"${1:name}\""
+            },
+            {
+                "displayText": "a href=\"mailto:\"",
+                "snippet": "a href=\"mailto:${1:joe@example.com}?subject=${2:feedback}\""
+            }
+        ]
+    },
+    "abbr": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "abbr title=\"$1\""
+            }
+        ]
+    },
+    "area": {
+        "autocomplete": [
+            {
+            },
+            {
+                "displayText": "area shape=\"\" coords=\"\" href=\"\"",
+                "snippet": "area ${1:shape=\"${2:default}\"} coords=\"$3\" ${4:href=\"${5:#}\"}"
+            }
+        ]
+    },
+    "audio": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "audio src=\"$1\""
+            }
+        ]
+    },
+    "base": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "base href=\"${1:#}\" target=\"${2:_blank}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "bdi": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "bdi dir=\"${1:auto}\""
+            }
+        ]
+    },
+    "bdo": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "bdo dir=\"${1:auto}\""
+            }
+        ]
+    },
+    "blockquote": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "blockquote cite=\"${1:http://}\""
+            }
+        ]
+    },
+    "button": {
+        "autocomplete": [
+            {
+            },
+            {
+                "displayText": "button type=\"button\"",
+                "snippet": "button type=\"${1:button}\""
+            }
+        ]
+    },
+    "canvas": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "canvas id=\"${1:canvas}\" width=\"${2:300}\" height=\"${3:300}\""
+            }
+        ]
+    },
+    "content": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "content select=\"$1\""
+            }
+        ]
+    },
+    "data": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "data value=\"$1\""
+            }
+        ]
+    },
+    "div": {
+        "autocomplete": [
+            {
+            },
+            {
+                "snippet": "div class=\"$2\""
+            }
+        ]
+    },
+    "embed": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "embed type=\"${1:video/quicktime}\" src=\"${2:#}\" width=\"${3:300}\" height=\"${4:300}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "form": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "form class=\"$1\" action=\"${2:index.html}\" method=\"${3:post}\""
+            }
+        ]
+    },
+    "html": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "!DOCTYPE html"
+            },
+            {
+                "displayText": "HTML page",
+                "snippet": "<!DOCTYPE html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<title>${1:title}</title>\n\t</head>\n\t<body>\n\t\t$2\n\t</body>\n</html>\n"
+            },
+            {
+                "displayText": "HTML page (concise)",
+                "snippet": "<!DOCTYPE html>\nhtml lang=\"en\"\n\thead\n\t\tmeta charset=\"UTF-8\"\n\t\t<title>${1:title}</title>\n\tbody\n\t\t$2\n"
+            }
+        ]
+    },
+    "iframe": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "iframe src=\"$1\" width=\"$2\" height=\"$3\""
+            }
+        ]
+    },
+    "input": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "input type=\"${1}\" name=\"${2:name}\" value=\"$3\"",
+                "triggerAutocompleteAfterInsert": true
+            }
+        ],
+        "openTagOnly": true,
+        "attributeOptions": {
+            "type": [
+                {
+                    "text": "button",
+                    "description": "A push button with no default behavior."
+                },
+                {
+                    "text": "checkbox",
+                    "description": "A check box. You must use the value attribute to define the value submitted by this item. Use the checked attribute to indicate whether this item is selected. You can also use the indeterminate attribute to indicate that the checkbox is in an indeterminate state (on most platforms, this draws a horizontal line across the checkbox)."
+                },
+                {
+                    "text": "color",
+                    "description": "HTML5 A control for specifying a color. A color picker's UI has no required features other than accepting simple colors as text (more info)."
+                },
+                {
+                    "text": "date",
+                    "description": "HTML5 A control for entering a date (year, month, and day, with no time)."
+                },
+                {
+                    "text": "datetime",
+                    "description": "HTML5   A control for entering a date and time (hour, minute, second, and fraction of a second) based on UTC time zone. This feature has been removed from WHATWG HTML."
+                },
+                {
+                    "text": "datetime-local",
+                    "description": "HTML5 A control for entering a date and time, with no time zone."
+                },
+                {
+                    "text": "email",
+                    "description": "HTML5 A field for editing an e-mail address. The input value is validated to contain either the empty string or a single valid e-mail address before submitting. The :valid and :invalid CSS pseudo-classes are applied as appropriate."
+                },
+                {
+                    "text": "file",
+                    "description": "A control that lets the user select a file. Use the accept attribute to define the types of files that the control can select."
+                },
+                {
+                    "text": "hidden",
+                    "description": "A control that is not displayed, but whose value is submitted to the server."
+                },
+                {
+                    "text": "image",
+                    "description": "A graphical submit button. You must use the src attribute to define the source of the image and the alt attribute to define alternative text. You can use the height and width attributes to define the size of the image in pixels."
+                },
+                {
+                    "text": "month",
+                    "description": "HTML5 A control for entering a month and year, with no time zone."
+                },
+                {
+                    "text": "number",
+                    "description": "HTML5 A control for entering a floating point number."
+                },
+                {
+                    "text": "password",
+                    "description": "A single-line text field whose value is obscured. Use the maxlength attribute to specify the maximum length of the value that can be entered."
+                },
+                {
+                    "text": "radio",
+                    "description": "A radio button. You must use the value attribute to define the value submitted by this item. Use the checked attribute to indicate whether this item is selected by default. Radio buttons that have the same value for the name attribute are in the same \"radio button group\"; only one radio button in a group can be selected at a time."
+                },
+                {
+                    "text": "range",
+                    "description": "HTML5 A control for entering a number whose exact value is not important."
+                },
+                {
+                    "text": "reset",
+                    "description": "A button that resets the contents of the form to default values."
+                },
+                {
+                    "text": "search",
+                    "description": "HTML5 A single-line text field for entering search strings; line-breaks are automatically removed from the input value."
+                },
+                {
+                    "text": "submit",
+                    "description": "A button that submits the form."
+                },
+                {
+                    "text": "tel",
+                    "description": "HTML5 A control for entering a telephone number; line-breaks are automatically removed from the input value, but no other syntax is enforced. You can use attributes such as pattern and maxlength to restrict values entered in the control. The :valid and :invalid CSS pseudo-classes are applied as appropriate."
+                },
+                {
+                    "text": "text",
+                    "description": "A single-line text field; line-breaks are automatically removed from the input value."
+                },
+                {
+                    "text": "time",
+                    "description": "HTML5 A control for entering a time value with no time zone."
+                },
+                {
+                    "text": "url",
+                    "description": "HTML5 A field for editing a URL. The input value is validated to contain either the empty string or a valid absolute URL before submitting. Line-breaks and leading or trailing whitespace are automatically removed from the input value. You can use attributes such as pattern and maxlength to restrict values entered in the control. The :valid and :invalid CSS pseudo-classes are applied as appropriate."
+                },
+                {
+                    "text": "week",
+                    "description": "HTML5 A control for entering a date consisting of a week-year number and a week number with no time zone."
+                }
+            ]
+        }
+    },
+    "img": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "img src=\"$1\" alt=\"$2\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "keygen": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "keygen name=\"${1:name}\" challenge=\"${2:string}\" keytype=\"${3:RSA}\" keyparams=\"${4:medium}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "label": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "label${1: for=\"$2\"}"
+            }
+        ]
+    },
+    "link": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "link rel=\"${1:stylesheet}\" href=\"${2:/css/master.css}\" media=\"${3:screen}\" title=\"${4:no title}\" charset=\"${5:utf-8}\""
+            },
+            {
+                "snippet": "link rel=\"icon\" href=\"$1.ico\""
+            },
+            {
+                "snippet": "link rel=\"import\" href=\"$1\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "menuitem": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "menuitem type=\"${1:command}\" label=\"${2:Save}\""
+            }
+        ]
+    },
+    "meter": {
+        "autocomplete": [
+            {},
+            {
+                "snippet": "meter min=\"${1:200}\" max=\"${2:500}\" value=\"${3:350}\""
+            }
+        ]
+    },
+    "meta": {
+        "autocomplete": [
+            {
+                "snippet": "meta name=\"${1:name}\" content=\"${2:content}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "object": {
+        "autocomplete": [
+            {
+                "snippet": "object data=\"${1:http://}\" type=\"${2:mimetype}\""
+            }
+        ]
+    },
+    "optgroup": {
+        "autocomplete": [
+            {
+                "snippet": "optgroup label=\"${1:Group 1}\""
+            }
+        ]
+    },
+    "opt": {
+        "autocomplete": [
+            {
+                "snippet": "option${1: value=\"${2:option}\"}"
+            }
+        ]
+    },
+    "output": {
+        "autocomplete": [
+            {
+                "snippet": "output name=\"${1:result}\""
+            }
+        ]
+    },
+    "param": {
+        "autocomplete": [
+            {
+                "snippet": "param name=\"${1:foo}\" value=\"${2:bar}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "progress": {
+        "autocomplete": [
+            {
+                "snippet": "progress value=\"${1:50}\" max=\"${2:100}\""
+            }
+        ]
+    },
+    "q": {
+        "autocomplete": [
+            {
+                "snippet": "q cite=\"$1\""
+            }
+        ]
+    },
+    "script": {
+        "autocomplete": [
+            {
+                "snippet": "script src=\"${1:/static/foo.js}\""
+            }
+        ]
+    },
+    "select": {
+        "autocomplete": [
+            {
+                "snippet": "select class=\"$1\" name=\"$2\""
+            }
+        ]
+    },
+    "source": {
+        "autocomplete": [
+            {
+                "snippet": "source src=\"${1:http://}\" type=\"${2:mimetype}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "style": {
+        "autocomplete": [
+            {
+                "snippet": "style media=\"screen\""
+            }
+        ]
+    },
+    "template": {
+        "autocomplete": [
+            {
+                "snippet": "template id=\"$1\""
+            }
+        ]
+    },
+    "textarea": {
+        "autocomplete": [
+            {
+                "snippet": "textarea name=\"${1:name}\" rows=\"${2:8}\" cols=\"${3:40}\""
+            }
+        ]
+    },
+    "track": {
+        "autocomplete": [
+            {
+                "snippet": "track kind=\"${1:subtitles}\" src=\"${2:sampleSubtitles_en.srt}\" srclang=\"${3:en}\""
+            }
+        ],
+        "openTagOnly": true
+    },
+    "video": {
+        "autocomplete": [
+            {
+                "displayText": "video src=\"\" autoplay poster=\"\"",
+                "snippet": "video src=\"${1:videofile.ogg}\" ${2:autoplay} ${3:poster=\"${4:posterimage.jpg}\"}"
+            }
+        ]
+    }
+}

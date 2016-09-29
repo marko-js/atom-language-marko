@@ -54,6 +54,8 @@ class TagMatcher {
         } else {
             var matchingTag;
 
+
+
             if (tag.isOpenTag) {
                 // We need to scan forward to find the matching open tag
                 matchingTag = this.findMatchingCloseTag(tag.range.end);
@@ -66,15 +68,18 @@ class TagMatcher {
 
         this.matchedTags = matchedTags;
         this.matchedTags.highlight(this.editor);
-
-        if (tag.tagNameMarker) {
-            tag.tagNameMarker.onDidChange((event) => {
-                if (event.textChanged) {
-                    matchedTags.synchronizeTagName(this.editor);
-                }
-
-            });
-        }
+        //
+        // if (tag.tagNameMarker) {
+        //     tag.tagNameMarker.onDidChange((event) => {
+        //         if (event.textChanged) {
+        //             var pos = this.editor.getCursorBufferPosition();
+        //             if (tag.containsCursor(pos)) {
+        //                 matchedTags.synchronizeTagName(this.editor);
+        //             }
+        //         }
+        //
+        //     });
+        // }
 
     }
 
@@ -83,17 +88,13 @@ class TagMatcher {
             if (this.matchedTags) {
                 var cursorPos = this.editor.getCursorBufferPosition();
                 if (this.matchedTags.activeTag.tagNameContainsCursor(cursorPos)) {
-                    if (this.matchedTags.synchronizeTagName(this.editor)) {
-                        return;
-                    }
-
+                    this.matchedTags.synchronizeTagName(this.editor);
+                    return;
                 }
             }
 
             this.unhighlight();
             this.highlight();
-
-
         }));
 
         this.subscriptions.add(this.editor.onDidChangeCursorPosition((event) => {
@@ -105,11 +106,18 @@ class TagMatcher {
             var cursor = event.cursor;
 
             if (this.matchedTags) {
-                if (this.matchedTags.containsCursor(cursor.getBufferPosition())) {
+                let cursorPos = cursor.getBufferPosition();
+                if (this.matchedTags.activeTag.containsCursor(cursorPos)) {
                     // Nothing to do, the cursor is still within the matching tags
                     return;
                 } else {
-                    this.unhighlight();
+                    let inactiveTag = this.matchedTags.inactiveTag;
+                    if (inactiveTag && inactiveTag.containsCursor(cursorPos)) {
+                        this.matchedTags.swapActiveTag();
+                        return;
+                    } else {
+                        this.unhighlight();
+                    }
                 }
             }
 
@@ -223,6 +231,7 @@ class TagMatcher {
         var isSelfClosedTag = false;
 
         this.scanTokens(pos, (m) => {
+            // console.log('TOKEN', m.token, 'TEXT:', m.matchText);
             switch(m.token) {
                 case TOKEN_OPEN_TAG_START:
                     isOpenTag = true;
@@ -236,6 +245,7 @@ class TagMatcher {
                     /* falls through */
                 case TOKEN_CLOSE_TAG_NAME:
                     tagNameRange = m.range;
+                    // console.log('TAG NAME', this.editor.getTextInBufferRange(m.range));
                     break;
                 case TOKEN_OPEN_TAG_END_SELF_CLOSE:
                     isSelfClosedTag = true;
@@ -245,6 +255,7 @@ class TagMatcher {
                     if (foundStart) {
                         end = m.range.end;
                         let tagRange = new Range(start, end);
+                        // console.log('TAG', this.editor.getTextInBufferRange(tagRange), 'isOpenTag:', isOpenTag);
                         m.tag = new Tag(tagNameRange, tagRange, isOpenTag, isSelfClosedTag, this.editor);
                         iterator(m);
                     }
@@ -252,6 +263,7 @@ class TagMatcher {
                     isOpenTag = false;
                     tagNameRange = null;
                     isSelfClosedTag = false;
+                    foundStart = false;
                     break;
             }
         });

@@ -20,6 +20,21 @@ class MatchedTags {
         return false;
     }
 
+    get inactiveTag() {
+        if (this.openTag === this.activeTag) {
+            return this.closeTag;
+        } else {
+            return this.openTag;
+        }
+    }
+
+    swapActiveTag() {
+        var inactiveTag = this.inactiveTag;
+        if (inactiveTag) {
+            this.activeTag = inactiveTag;
+        }
+    }
+
     highlight(editor) {
         this.openTag.highlight(editor);
         if (this.closeTag) {
@@ -35,7 +50,6 @@ class MatchedTags {
     }
 
     synchronizeTagName(editor) {
-
         if (!this.closeTag || editor.hasMultipleCursors()) {
             // There is only an open tag
             return false;
@@ -52,17 +66,15 @@ class MatchedTags {
             toTag = this.openTag;
         }
 
-
-
         var fromTagName = fromTag.tagName;
         var toTagName = toTag.tagName;
 
         if (toTagName != null && fromTagName !== toTagName) {
+            var tagHtml = fromTag.tagHtml;
 
-            if (simpleTagName.test(fromTagName)) {
+            if (fromTagName === '' || simpleTagName.test(fromTagName) && tagHtml.startsWith('<') && tagHtml.endsWith('>')) {
                 // Adjust the ranges based
                 toTag.tagName = fromTagName;
-
 
                 setTimeout(function() {
                     atom.commands.dispatch(atom.views.getView(editor), 'autocomplete-plus:activate', {
@@ -72,7 +84,6 @@ class MatchedTags {
 
                 return true;
             }
-
         }
 
         return false;

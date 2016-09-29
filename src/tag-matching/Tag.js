@@ -8,7 +8,7 @@ class Tag {
 
         this.tagNameMarker = tagNameRange ? editor.markBufferRange(tagNameRange) : null;
 
-        this.marker = editor.markBufferRange(range);
+        this.marker = range ? editor.markBufferRange(range) : range;
     }
 
     containsCursor(cursorPos) {
@@ -20,6 +20,10 @@ class Tag {
     }
 
     highlight() {
+        if (!this.marker) {
+            return;
+        }
+
         this.editor.decorateMarker(this.marker, {
             type: 'highlight',
             class: 'bracket-matcher',
@@ -28,6 +32,10 @@ class Tag {
     }
 
     unhighlight() {
+        if (!this.marker) {
+            return;
+        }
+
         var editor = this.editor;
         editor.destroyMarker(this.marker.id);
     }
@@ -41,15 +49,25 @@ class Tag {
     }
 
     set tagName(value) {
-        this.editor.setTextInBufferRange(this.tagNameMarker.getBufferRange(), value);
+        this.editor.setTextInBufferRange(this.tagNameMarker.getBufferRange(), value, {
+            undo: 'skip'
+        });
     }
 
     get range() {
-        return this.marker.getBufferRange();
+        return this.marker && this.marker.getBufferRange();
     }
 
     get tagNameRange() {
         return this.tagNameMarker ? this.tagNameMarker.getBufferRange() : null;
+    }
+
+    get tagHtml() {
+        if (!this.marker) {
+            return '';
+        }
+
+        return this.editor.getTextInBufferRange(this.marker.getBufferRange());
     }
 }
 
