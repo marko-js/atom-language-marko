@@ -68,19 +68,6 @@ class TagMatcher {
 
         this.matchedTags = matchedTags;
         this.matchedTags.highlight(this.editor);
-        //
-        // if (tag.tagNameMarker) {
-        //     tag.tagNameMarker.onDidChange((event) => {
-        //         if (event.textChanged) {
-        //             var pos = this.editor.getCursorBufferPosition();
-        //             if (tag.containsCursor(pos)) {
-        //                 matchedTags.synchronizeTagName(this.editor);
-        //             }
-        //         }
-        //
-        //     });
-        // }
-
     }
 
     beginWatching() {
