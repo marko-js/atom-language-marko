@@ -1,11 +1,11 @@
-var Inspector = require('./Inspector');
-var completionType = require('./completion-type');
-var markoCompiler = require('marko/compiler');
-var snippetPlaceholdersRegExp = /\$\{[0-9]+\:([^}]+)\}|\$\{[0-9]+\}|\$[0-9]+/g;
-var fuzzaldrinPlus = require('fuzzaldrin-plus');
-var path = require('path');
-var lassoPackageRoot = require('lasso-package-root');
-var ok = require('assert').ok;
+const Inspector = require('./Inspector');
+const completionType = require('./completion-type');
+const markoUtil = require('../util/marko');
+const snippetPlaceholdersRegExp = /\$\{[0-9]+\:([^}]+)\}|\$\{[0-9]+\}|\$[0-9]+/g;
+const fuzzaldrinPlus = require('fuzzaldrin-plus');
+const path = require('path');
+const lassoPackageRoot = require('lasso-package-root');
+const ok = require('assert').ok;
 
 const SORT_PRIORITY_GLOBAL = 5;
 const SORT_PRIORITY_LOCAL = 10;
@@ -125,6 +125,8 @@ class SuggestionsBuilder {
         this.htmlTags = htmlTags;
 
         this._taglibLookup = undefined;
+
+        this.markoMajorVersion = markoUtil.getMarkoMajorVersion(this.dir);
     }
 
     getSuggestions() {
@@ -168,19 +170,24 @@ class SuggestionsBuilder {
         this.suggestions.push(suggestion);
     }
 
+    get dir() {
+        var filePath = this.filePath;
+        var dir;
+
+        if (filePath) {
+            dir = path.dirname(filePath);
+        } else {
+            dir = getDefaultDir();
+        }
+
+        return dir;
+    }
+
     get taglibLookup() {
         var taglibLookup = this._taglibLookup;
         if (!taglibLookup) {
-            var filePath = this.filePath;
-            var dir;
-
-            if (filePath) {
-                dir = path.dirname(filePath);
-            } else {
-                dir = getDefaultDir();
-            }
-
-            taglibLookup = this._taglibLookup = markoCompiler.buildTaglibLookup(dir);
+            var dir = this.dir;
+            taglibLookup = this._taglibLookup = markoUtil.loadMarkoCompiler(dir).buildTaglibLookup(dir);
         }
 
         return taglibLookup;
@@ -198,50 +205,53 @@ class SuggestionsBuilder {
     }
 
     addTagSuggestions(inspected) {
-        var prefix = this.prefix;
+        var markoMajorVersion = this.markoMajorVersion;
+        if (markoMajorVersion == null || markoMajorVersion >= 3) {
+            let prefix = this.prefix;
 
-        if (this.inspected.completionType === completionType.TAG_END) {
-            let text = inspected.tagName + ( inspected.shouldCompleteEndingTag ? '>' : '' );
+            if (this.inspected.completionType === completionType.TAG_END) {
+                let text = inspected.tagName + ( inspected.shouldCompleteEndingTag ? '>' : '' );
 
-            if (this.prefix !== text) {
-                this.addSuggestion({
-                    text: text,
-                    displayText: inspected.tagName,
-                    sortText: inspected.tagName,
-                    type: 'tag'
-                });
-            }
-            return;
-        }
-
-        if (inspected.hasShorthand) {
-            if (inspected.concise !== true && inspected.shouldCompleteEndingTag !== false) {
-                let tagName = inspected.tagName;
-
-                this.addSuggestion({
-                    text: tagName,
-                    displayText: '<' + prefix + '></' + tagName + '>',
-                    type: 'tag',
-                    snippet: prefix + '${1}>${2}</' +tagName + '>'
-                });
-            }
-
-            return;
-        }
-
-        var taglibLookup = this.taglibLookup;
-
-        taglibLookup.getTagsSorted().forEach((tag) => {
-            if (tag.name.indexOf('*') !== -1 || tag.name.startsWith('_')) {
+                if (this.prefix !== text) {
+                    this.addSuggestion({
+                        text: text,
+                        displayText: inspected.tagName,
+                        sortText: inspected.tagName,
+                        type: 'tag'
+                    });
+                }
                 return;
             }
 
-            if (this.shouldAllowSuggestion(tag.name)) {
-                this.addCustomTagSuggestion(tag, inspected);
-            }
-        });
+            if (inspected.hasShorthand) {
+                if (inspected.concise !== true && inspected.shouldCompleteEndingTag !== false) {
+                    let tagName = inspected.tagName;
 
-        var htmlTags = this.htmlTags.tags;
+                    this.addSuggestion({
+                        text: tagName,
+                        displayText: '<' + prefix + '></' + tagName + '>',
+                        type: 'tag',
+                        snippet: prefix + '${1}>${2}</' +tagName + '>'
+                    });
+                }
+
+                return;
+            }
+
+            var taglibLookup = this.taglibLookup;
+
+            taglibLookup.getTagsSorted().forEach((tag) => {
+                if (tag.name.indexOf('*') !== -1 || tag.name.startsWith('_')) {
+                    return;
+                }
+
+                if (this.shouldAllowSuggestion(tag.name)) {
+                    this.addCustomTagSuggestion(tag, inspected);
+                }
+            });
+        }
+
+        var htmlTags = this.htmlTags && this.htmlTags.tags;
         for (var tagName in htmlTags) {
             if (this.shouldAllowSuggestion(tagName)) {
                 var tagInfo = htmlTags[tagName];
@@ -259,17 +269,20 @@ class SuggestionsBuilder {
 
         var htmlTags = this.htmlTags;
 
-        this.taglibLookup.forEachAttribute(tagName, (attr, tag) => {
-            if (attr.name === '*' || attr.name.startsWith('_')) {
-                return;
-            }
+        var markoMajorVersion = this.markoMajorVersion;
+        if (markoMajorVersion == null || markoMajorVersion >= 3) {
+            this.taglibLookup.forEachAttribute(tagName, (attr, tag) => {
+                if (attr.name === '*' || attr.name.startsWith('_')) {
+                    return;
+                }
 
-            if (this.shouldAllowSuggestion(attr.name)) {
-                this.addCustomAttrSuggestion(attr, tag, inspected);
-            }
-        });
+                if (this.shouldAllowSuggestion(attr.name)) {
+                    this.addCustomAttrSuggestion(attr, tag, inspected);
+                }
+            });
+        }
 
-        let htmlTagInfo = htmlTags.tags[tagName];
+        let htmlTagInfo = this.htmlTags && htmlTags.tags[tagName];
         if (htmlTagInfo) {
             let attributes = htmlTagInfo.attributes;
             if (attributes && attributes.length) {
@@ -296,7 +309,7 @@ class SuggestionsBuilder {
         var htmlTags = this.htmlTags;
 
         // First see if the tag name corresponds to a standard HTML tag...
-        let htmlTagInfo = htmlTags.tags[tagName];
+        let htmlTagInfo = htmlTags.tags && htmlTags.tags[tagName];
         if (htmlTagInfo) {
             if (htmlTagInfo.attributeOptions && htmlTagInfo.attributeOptions[attributeName]) {
                 return htmlTagInfo.attributeOptions[attributeName];

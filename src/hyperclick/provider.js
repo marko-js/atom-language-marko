@@ -5,7 +5,7 @@ const lassoPackageRoot = require('lasso-package-root');
 const resolveFrom = require('resolve-from');
 const Inspector = require('./Inspector');
 const escapeStringRegexp = require('escape-string-regexp');
-const markoCompilerUtil = require('../util/markoCompiler');
+const markoUtil = require('../util/marko');
 
 const TAG_PATH_PROPS = [
     'renderer',
@@ -106,10 +106,10 @@ function getTaglibLookup(textEditor) {
 
     if (filePath) {
         dir = path.dirname(filePath);
-        markoCompiler = markoCompilerUtil.loadMarkoCompiler(dir);
+        markoCompiler = markoUtil.loadMarkoCompiler(dir);
     } else {
         dir = getDefaultDir();
-        markoCompiler = markoCompilerUtil.defaultMarkoCompiler;
+        markoCompiler = markoUtil.defaultMarkoCompiler;
     }
 
     let taglibLookup = markoCompiler.buildTaglibLookup(dir);

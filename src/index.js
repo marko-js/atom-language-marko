@@ -5,14 +5,14 @@ const tagMatching = require('./tag-matching');
 const autocompleteProvider = require('./autocomplete/provider');
 const hyperclickProvider = require('./hyperclick/provider');
 const path = require('path');
-const markoCompilerUtil = require('./util/markoCompiler');
+const markoUtil = require('./util/marko');
 
 module.exports = {
     subscriptions: null,
 
     activate(state) {
         autocompleteProvider.onActivate();
-        
+
         this.subscriptions = new CompositeDisposable();
 
         function handleEditorSave(event) {
@@ -24,7 +24,7 @@ module.exports = {
                     filename === 'package.json' ||
                     filename === 'template.marko' ||
                     filename === 'renderer.js') {
-                    markoCompilerUtil.clearCache();
+                    markoUtil.clearCache();
                 }
             }
         }

@@ -3,7 +3,7 @@
 // - Show left label for attribute type
 // - Add snippets for Marko Widgets
 // - Add snippets for lasso
-var markoCompiler = require('marko/compiler');
+var markoUtil = require('../util/marko');
 var path = require('path');
 var fs = require('fs');
 var SuggestionsBuilder = require('./SuggestionsBuilder');
@@ -74,24 +74,6 @@ module.exports = {
                     throw err;
                 }
             });
-
-        function handleEditorSave(event) {
-            var filePath = event.path;
-            if (filePath) {
-                var filename = path.basename(filePath);
-                if (filename === 'marko-tag.json' ||
-                    filename === 'marko.json' ||
-                    filename === 'package.json' ||
-                    filename === 'template.marko' ||
-                    filename === 'renderer.js') {
-                    markoCompiler.clearCaches();
-                }
-            }
-        }
-
-        atom.workspace.observeTextEditors((editor) => {
-            editor.onDidSave(handleEditorSave);
-        });
 
         return Promise.resolve();
     }

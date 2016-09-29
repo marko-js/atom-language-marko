@@ -26,6 +26,8 @@ const SCOPE_STRING = { type: scopeType.TAG, concise: true  };
 const SCOPE_ATTR_NAME_VALUE_SEPARATOR = { type: scopeType.ATTR_NAME_VALUE_SEPARATOR };
 const SCOPE_ATTR_NAME = { type: scopeType.ATTR_NAME };
 
+const TOKEN_OPEN_TAG_END = 'OPEN_TAG_END';
+
 class Inspector {
     constructor(request) {
         var editor = request.editor;
@@ -103,7 +105,7 @@ class Inspector {
 
         if (!inspected.completionType) {
             let scopeNames = this.getScopeNames(pos);
-            if (scopeNames.length === 1 && scopeNames[0] === 'text.marko') {
+            if (scopeNames.length === 1 && scopeNames[0] === 'text.marko' || this.getTokenForScopeNames(scopeNames) === TOKEN_OPEN_TAG_END) {
                 // See if we are positioned after an attribute
                 if (this.isAfterAttribute(pos)) {
                     inspected.completionType = completionType.ATTR_NAME;
@@ -281,6 +283,15 @@ class Inspector {
         return false;
     }
 
+    getTokenForScopeNames(scopeNames) {
+        for (let i=0; i<scopeNames.length; i++) {
+            let scopeName = scopeNames[i];
+
+            if (scopeName.startsWith('punctuation.definition.marko-tag.end.open')) {
+                return TOKEN_OPEN_TAG_END;
+            }
+        }
+    }
     getInfoForScopeName(scopeName) {
         if (scopeName.startsWith('entity.name.tag') || scopeName.startsWith('support.function.marko-tag') || scopeName.startsWith('meta.tag')) {
             let isConcise = scopeName.endsWith('.concise');

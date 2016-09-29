@@ -1,5 +1,11 @@
 'use strict';
 
+const decorateOptions = {
+    type: 'highlight',
+    class: 'bracket-matcher',
+    deprecatedRegionClass: 'bracket-matcher'
+};
+
 class Tag {
     constructor(tagNameRange, range, isOpenTag, isSelfClosedTag, editor) {
         this.isOpenTag = isOpenTag;
@@ -20,24 +26,26 @@ class Tag {
     }
 
     highlight() {
-        if (!this.marker) {
-            return;
+        var tagName = this.tagName;
+        if (tagName) {
+            this.editor.decorateMarker(this.tagNameMarker, decorateOptions);
+        } else if (this.marker) {
+            this.editor.decorateMarker(this.marker, decorateOptions);
         }
 
-        this.editor.decorateMarker(this.marker, {
-            type: 'highlight',
-            class: 'bracket-matcher',
-            deprecatedRegionClass: 'bracket-matcher'
-        });
+
     }
 
     unhighlight() {
-        if (!this.marker) {
-            return;
+        var editor = this.editor;
+
+        if (this.marker) {
+            editor.destroyMarker(this.marker.id);
         }
 
-        var editor = this.editor;
-        editor.destroyMarker(this.marker.id);
+        if (this.tagNameMarker) {
+            editor.destroyMarker(this.tagNameMarker.id);
+        }
     }
 
     get tagName() {
