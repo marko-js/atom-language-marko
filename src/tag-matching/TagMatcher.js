@@ -2,18 +2,49 @@ var CompositeDisposable = require('atom').CompositeDisposable;
 const Tag = require('./Tag');
 const MatchedTags = require('./MatchedTags');
 
-const TOKEN_OPEN_TAG_NAME = 'OPEN_TAG_NAME';
-const TOKEN_OPEN_TAG_END = 'OPEN_TAG_END';
-const TOKEN_OPEN_TAG_END_SELF_CLOSE = 'OPEN_TAG_END_SELF_CLOSE';
-const TOKEN_OPEN_TAG_START = 'OPEN_TAG_START';
-const TOKEN_CLOSE_TAG_NAME = 'CLOSE_TAG_NAME';
-const TOKEN_CLOSE_TAG_END = 'CLOSE_TAG_END';
-const TOKEN_CLOSE_TAG_START = 'CLOSE_TAG_START';
-const TOKEN_ATTR = 'ATTR';
+const TOKEN_NAME_OPEN_TAG_NAME = 'OPEN_TAG_NAME';
+const TOKEN_NAME_OPEN_TAG_END = 'OPEN_TAG_END';
+const TOKEN_NAME_OPEN_TAG_START = 'OPEN_TAG_START';
+const TOKEN_NAME_CLOSE_TAG_NAME = 'CLOSE_TAG_NAME';
+const TOKEN_NAME_CLOSE_TAG_END = 'CLOSE_TAG_END';
+const TOKEN_NAME_CLOSE_TAG_START = 'CLOSE_TAG_START';
+const TOKEN_NAME_ATTR = 'ATTR';
+
+const TOKEN_OPEN_TAG_NAME = {
+    name: TOKEN_NAME_OPEN_TAG_NAME
+};
+const TOKEN_OPEN_TAG_NAME_CONCISE = {
+    name: TOKEN_NAME_OPEN_TAG_NAME,
+    isConcise: true
+};
+const TOKEN_OPEN_TAG_END = {
+    name: TOKEN_NAME_OPEN_TAG_END
+};
+const TOKEN_OPEN_TAG_END_SELF_CLOSE = {
+    name: TOKEN_NAME_OPEN_TAG_END,
+    isSelfClosedTag: true
+};
+const TOKEN_OPEN_TAG_START = {
+    name: TOKEN_NAME_OPEN_TAG_START
+};
+const TOKEN_CLOSE_TAG_NAME = {
+    name: TOKEN_NAME_CLOSE_TAG_NAME
+};
+const TOKEN_CLOSE_TAG_END = {
+    name: TOKEN_NAME_CLOSE_TAG_END
+};
+const TOKEN_CLOSE_TAG_START = {
+    name: TOKEN_NAME_CLOSE_TAG_START
+};
+const TOKEN_ATTR = {
+    name: TOKEN_NAME_ATTR
+};
+
 
 var Range = require('atom').Range;
 
 var tokensRegExp = /\/>|>|<\/|<|[a-zA-Z0-9\-:]+/g;
+var tagNameStartRegExp = /\s+|[a-zA-Z0-9\-:]+/g;
 
 class TagMatcher {
     constructor(editor) {
@@ -71,10 +102,12 @@ class TagMatcher {
     }
 
     beginWatching() {
-        this.subscriptions.add(this.editor.getBuffer().onDidChangeText((event) => {
+        this.subscriptions.add(this.editor.getBuffer().onDidChangeText((
+            event) => {
             if (this.matchedTags) {
                 var cursorPos = this.editor.getCursorBufferPosition();
-                if (this.matchedTags.activeTag.tagNameContainsCursor(cursorPos)) {
+                if (this.matchedTags.activeTag.tagNameContainsCursor(
+                        cursorPos)) {
                     this.matchedTags.synchronizeTagName(this.editor);
                     return;
                 }
@@ -94,12 +127,14 @@ class TagMatcher {
 
             if (this.matchedTags) {
                 let cursorPos = cursor.getBufferPosition();
-                if (this.matchedTags.activeTag.containsCursor(cursorPos)) {
+                if (this.matchedTags.activeTag.containsCursor(
+                        cursorPos)) {
                     // Nothing to do, the cursor is still within the matching tags
                     return;
                 } else {
                     let inactiveTag = this.matchedTags.inactiveTag;
-                    if (inactiveTag && inactiveTag.containsCursor(cursorPos)) {
+                    if (inactiveTag && inactiveTag.containsCursor(
+                            cursorPos)) {
                         this.matchedTags.swapActiveTag();
                         return;
                     } else {
@@ -170,12 +205,16 @@ class TagMatcher {
     }
 
     getScopeNames(pos) {
-        let scopeDescriptor = this.editor.scopeDescriptorForBufferPosition(pos);
+        let scopeDescriptor = this.editor.scopeDescriptorForBufferPosition(
+            pos);
         return scopeDescriptor.getScopesArray();
     }
 
     backwardsScanTokens(pos, iterator) {
-        var beginPos = {row:0, column:0};
+        var beginPos = {
+            row: 0,
+            column: 0
+        };
         var range = [beginPos, pos];
 
         tokensRegExp.lastIndex = 0;
@@ -186,9 +225,30 @@ class TagMatcher {
                 return;
             }
 
-            m.token = token;
-            iterator(m);
+            iterator(m, token);
         });
+    }
+
+    getTagNameStartPos(pos, iterator) {
+        var beginPos = {
+            row: 0,
+            column: 0
+        };
+        var range = [beginPos, pos];
+
+        tokensRegExp.lastIndex = 0;
+
+        var startPos = pos;
+
+        this.editor.backwardsScanInBufferRange(tagNameStartRegExp, range, (m) => {
+            if (m.matchText.trim() !== '') {
+                startPos = m.range.start;
+            }
+
+            m.stop();
+        });
+
+        return startPos;
     }
 
     scanTokens(pos, iterator) {
@@ -204,8 +264,7 @@ class TagMatcher {
                 return;
             }
 
-            m.token = token;
-            iterator(m);
+            iterator(m, token);
         });
     }
 
@@ -217,33 +276,32 @@ class TagMatcher {
         var isOpenTag = false;
         var isSelfClosedTag = false;
 
-        this.scanTokens(pos, (m) => {
-            // console.log('TOKEN', m.token, 'TEXT:', m.matchText);
-            switch(m.token) {
-                case TOKEN_OPEN_TAG_START:
+        this.scanTokens(pos, (m, token) => {
+            switch (token.name) {
+                case TOKEN_NAME_OPEN_TAG_START:
                     isOpenTag = true;
                     /* falls through */
-                case TOKEN_CLOSE_TAG_START:
+                case TOKEN_NAME_CLOSE_TAG_START:
                     start = m.range.start;
                     foundStart = true;
                     break;
-                case TOKEN_OPEN_TAG_NAME:
+                case TOKEN_NAME_OPEN_TAG_NAME:
                     isOpenTag = true;
                     /* falls through */
-                case TOKEN_CLOSE_TAG_NAME:
+                case TOKEN_NAME_CLOSE_TAG_NAME:
                     tagNameRange = m.range;
                     // console.log('TAG NAME', this.editor.getTextInBufferRange(m.range));
                     break;
-                case TOKEN_OPEN_TAG_END_SELF_CLOSE:
-                    isSelfClosedTag = true;
-                    /* falls through */
-                case TOKEN_OPEN_TAG_END:
-                case TOKEN_CLOSE_TAG_END:
+                case TOKEN_NAME_OPEN_TAG_END:
+                case TOKEN_NAME_CLOSE_TAG_END:
+                    isSelfClosedTag = token.isSelfClosedTag;
                     if (foundStart) {
                         end = m.range.end;
                         let tagRange = new Range(start, end);
                         // console.log('TAG', this.editor.getTextInBufferRange(tagRange), 'isOpenTag:', isOpenTag);
-                        m.tag = new Tag(tagNameRange, tagRange, isOpenTag, isSelfClosedTag, this.editor);
+                        m.tag = new Tag(tagNameRange, tagRange,
+                            isOpenTag, isSelfClosedTag, this.editor
+                        );
                         iterator(m);
                     }
 
@@ -264,16 +322,18 @@ class TagMatcher {
         var isOpenTag = false;
         var isSelfClosedTag = false;
 
-        this.backwardsScanTokens(pos, (m) => {
-            switch(m.token) {
-                case TOKEN_OPEN_TAG_START:
+        this.backwardsScanTokens(pos, (m, token) => {
+            switch (token.name) {
+                case TOKEN_NAME_OPEN_TAG_START:
                     isOpenTag = true;
                     /* falls through */
-                case TOKEN_CLOSE_TAG_START:
+                case TOKEN_NAME_CLOSE_TAG_START:
                     start = m.range.start;
                     if (foundEnd) {
                         let tagRange = new Range(start, end);
-                        m.tag = new Tag(tagNameRange, tagRange, isOpenTag, isSelfClosedTag, this.editor);
+                        m.tag = new Tag(tagNameRange, tagRange,
+                            isOpenTag, isSelfClosedTag, this.editor
+                        );
                         iterator(m);
                     }
 
@@ -281,17 +341,15 @@ class TagMatcher {
                     tagNameRange = null;
                     isSelfClosedTag = false;
                     break;
-                case TOKEN_OPEN_TAG_NAME:
+                case TOKEN_NAME_OPEN_TAG_NAME:
                     isOpenTag = true;
                     /* falls through */
-                case TOKEN_CLOSE_TAG_NAME:
+                case TOKEN_NAME_CLOSE_TAG_NAME:
                     tagNameRange = m.range;
                     break;
-                case TOKEN_OPEN_TAG_END_SELF_CLOSE:
-                    isSelfClosedTag = true;
-                    /* falls through */
-                case TOKEN_OPEN_TAG_END:
-                case TOKEN_CLOSE_TAG_END:
+                case TOKEN_NAME_OPEN_TAG_END:
+                case TOKEN_NAME_CLOSE_TAG_END:
+                    isSelfClosedTag = token.isSelfClosedTag;
                     foundEnd = true;
                     end = m.range.end;
                     break;
@@ -302,28 +360,40 @@ class TagMatcher {
     getTokenAtPosition(pos) {
         var scopeNames = this.getScopeNames(pos);
 
-        for (let i=0; i<scopeNames.length; i++) {
+        for (let i = 0; i < scopeNames.length; i++) {
             let scopeName = scopeNames[i];
-            if (scopeName.endsWith('.html')) {
-                if (scopeName === 'punctuation.definition.marko-tag.end.self-close.html') {
-                    return TOKEN_OPEN_TAG_END_SELF_CLOSE;
-                } else if (scopeName === 'punctuation.definition.marko-tag.begin.open.html') {
-                    return TOKEN_OPEN_TAG_START;
-                } else if (scopeName === 'punctuation.definition.marko-tag.end.open.html') {
-                    return TOKEN_OPEN_TAG_END;
-                }  else if (scopeName === 'punctuation.definition.marko-tag.begin.close.html') {
-                    return TOKEN_CLOSE_TAG_START;
-                } else if (scopeName === 'punctuation.definition.marko-tag.end.close.html') {
-                    return TOKEN_CLOSE_TAG_END;
-                } else if (scopeName.startsWith('entity.name.tag') || scopeName.startsWith('support.function.marko-tag')) {
-                    if (scopeName.endsWith('.close.html')) {
-                        return TOKEN_CLOSE_TAG_NAME;
+
+            if (scopeName ===
+                'punctuation.definition.marko-tag.end.self-close.html') {
+                return TOKEN_OPEN_TAG_END_SELF_CLOSE;
+            } else if (scopeName ===
+                'punctuation.definition.marko-tag.begin.open.html') {
+                return TOKEN_OPEN_TAG_START;
+            } else if (scopeName ===
+                'punctuation.definition.marko-tag.end.open.html') {
+                return TOKEN_OPEN_TAG_END;
+            } else if (scopeName ===
+                'punctuation.definition.marko-tag.begin.close.html') {
+                return TOKEN_CLOSE_TAG_START;
+            } else if (scopeName ===
+                'punctuation.definition.marko-tag.end.close.html') {
+                return TOKEN_CLOSE_TAG_END;
+            } else if (scopeName.startsWith('entity.name.tag') ||
+                scopeName.startsWith('support.function.marko-tag')) {
+
+                if (scopeName.endsWith('.close.html')) {
+                    return TOKEN_CLOSE_TAG_NAME;
+                } else {
+                    if (scopeName.endsWith('.concise')) {
+                        return TOKEN_OPEN_TAG_NAME_CONCISE;
                     } else {
                         return TOKEN_OPEN_TAG_NAME;
                     }
-                } else if (scopeName.startsWith('entity.other.attribute-name')) {
-                    return TOKEN_ATTR;
                 }
+            } else if (scopeName.startsWith('entity.other.attribute-name') ||
+                scopeName.startsWith('support.function.marko-attribute')) {
+
+                return TOKEN_ATTR;
             }
         }
 
@@ -348,152 +418,189 @@ class TagMatcher {
             // Maybe:
             // <foo| foo="test"> - token === undefined
             var prevPos = this.getPreviousPos(pos);
-            var prevPosToken = prevPos ? this.getTokenAtPosition(prevPos) : null;
-            if (prevPosToken !== TOKEN_OPEN_TAG_NAME) {
+            var prevPosToken = prevPos ? this.getTokenAtPosition(prevPos) :
+                null;
+            if (!prevPosToken || prevPosToken.name !==
+                TOKEN_NAME_OPEN_TAG_NAME) {
                 return;
             }
 
-            this.backwardsScanTokens(pos, (m) => {
-                switch(m.token) {
-                    case TOKEN_OPEN_TAG_NAME:
+            this.backwardsScanTokens(pos, (m, token) => {
+                switch (token.name) {
+                    case TOKEN_NAME_OPEN_TAG_NAME:
                         isOpenTag = true;
                         /* falls through */
-                    case TOKEN_CLOSE_TAG_NAME:
+                    case TOKEN_NAME_CLOSE_TAG_NAME:
                         tagNameRange = m.range;
+                        if (token.isConcise) {
+                            isSelfClosedTag = true;
+                            end = m.range.end;
+                            m.stop();
+                        }
                         break;
-                    case TOKEN_CLOSE_TAG_START:
-                    case TOKEN_OPEN_TAG_START:
+                    case TOKEN_NAME_CLOSE_TAG_START:
+                    case TOKEN_NAME_OPEN_TAG_START:
                         start = m.range.start;
-                        m.stop();
-                        break;
-                }
-            });
-        } else if (token === TOKEN_OPEN_TAG_END_SELF_CLOSE || token === TOKEN_OPEN_TAG_END || token === TOKEN_CLOSE_TAG_END) {
-            // <foo|/> - token === TOKEN_OPEN_TAG_END_SELF_CLOSE
-            // // <foo/|> - token === TOKEN_OPEN_TAG_END_SELF_CLOSE
-            // <foo|>  - token === TOKEN_OPEN_TAG_END
-            // </foo|> - token === TOKEN_OPEN_TAG_END
-
-            if (token === TOKEN_OPEN_TAG_END_SELF_CLOSE) {
-                isSelfClosedTag = true;
-                if (this.charAt(pos) === '/') {
-                    end = { row: pos.row, column: pos.column + 2};
-                } else {
-                    end = { row: pos.row, column: pos.column + 1};
-                }
-            } else {
-                end = { row: pos.row, column: pos.column + 1};
-            }
-
-            isSelfClosedTag = token === TOKEN_OPEN_TAG_END_SELF_CLOSE;
-
-            // We need to scan backwards until we find the start of the tag
-            this.backwardsScanTokens(pos, (m) => {
-                switch(m.token) {
-                    case TOKEN_OPEN_TAG_NAME:
-                        isOpenTag = true;
-                        /* falls through */
-                    case TOKEN_CLOSE_TAG_NAME:
-                        tagNameRange = m.range;
-                        break;
-                    case TOKEN_CLOSE_TAG_START:
-                    case TOKEN_OPEN_TAG_START:
-                        start = m.range.start;
-                        m.stop();
-                        break;
-                }
-            });
-        } else if (token === TOKEN_OPEN_TAG_START || token === TOKEN_CLOSE_TAG_START) {
-            // |<foo>  - token === TOKEN_OPEN_TAG_START
-            // |<foo/> - token === TOKEN_OPEN_TAG_START
-            // |</foo> - token === TOKEN_CLOSE_TAG_START
-            // <|/foo> - token === TOKEN_CLOSE_TAG_START
-
-            if (this.charAt(pos) === '/') {
-                start = this.getPreviousPos(pos);
-            } else {
-                start = pos;
-            }
-
-            // We need to scan forward until we find the tag name
-            this.scanTokens(pos, (m) => {
-                switch(m.token) {
-                    case TOKEN_OPEN_TAG_NAME:
-                        isOpenTag = true;
-                        /* falls through */
-                    case TOKEN_CLOSE_TAG_NAME:
-                        tagNameRange = m.range;
-                        m.stop();
-                        break;
-                }
-            });
-        } else if (token === TOKEN_OPEN_TAG_NAME || token === TOKEN_CLOSE_TAG_NAME) {
-            // <|foo>  - token === TOKEN_OPEN_TAG_NAME
-            // </|foo> - token === TOKEN_CLOSE_TAG_NAME
-
-            // We need to scan backwards until we find the start of the tag
-            this.backwardsScanTokens(pos, (m) => {
-                switch(m.token) {
-                    case TOKEN_CLOSE_TAG_START:
-                    case TOKEN_OPEN_TAG_START:
-                        start = m.range.start;
-                        m.stop();
-                        break;
-                }
-            });
-
-            // Now we need to scan forward to find the complete tag name
-            this.scanTokens(start, (m) => {
-                switch(m.token) {
-                    case TOKEN_OPEN_TAG_NAME:
-                        isOpenTag = true;
-                        /* falls through */
-                    case TOKEN_CLOSE_TAG_NAME:
-                        tagNameRange = m.range;
-                        m.stop();
-                        break;
-                }
-            });
-        }  else if (token === TOKEN_ATTR) {
-            // <foo |foo="">  - token === ATTR
-
-            // We need to scan backwards until we find the start of the tag
-            this.backwardsScanTokens(pos, (m) => {
-                switch(m.token) {
-                    case TOKEN_CLOSE_TAG_START:
-                    case TOKEN_OPEN_TAG_START:
-                        start = m.range.start;
-                        m.stop();
-                        break;
-                }
-            });
-
-            // Now we need to scan forward to find the complete tag name
-            this.scanTokens(start, (m) => {
-                switch(m.token) {
-                    case TOKEN_OPEN_TAG_NAME:
-                        isOpenTag = true;
-                        /* falls through */
-                    case TOKEN_CLOSE_TAG_NAME:
-                        tagNameRange = m.range;
                         m.stop();
                         break;
                 }
             });
         } else {
-            throw new Error('Illegal state');
+            switch (token.name) {
+                case TOKEN_NAME_OPEN_TAG_END:
+                case TOKEN_NAME_CLOSE_TAG_END:
+                    {
+                        // <foo|/> - token === TOKEN_OPEN_TAG_END_SELF_CLOSE
+                        // // <foo/|> - token === TOKEN_OPEN_TAG_END_SELF_CLOSE
+                        // <foo|>  - token === TOKEN_OPEN_TAG_END
+                        // </foo|> - token === TOKEN_OPEN_TAG_END
+                        isSelfClosedTag = token.isSelfClosedTag;
+
+                        if (token.isSelfClosedTag) {
+                            isSelfClosedTag = true;
+                            if (this.charAt(pos) === '/') {
+                                end = {
+                                    row: pos.row,
+                                    column: pos.column + 2
+                                };
+                            } else {
+                                end = {
+                                    row: pos.row,
+                                    column: pos.column + 1
+                                };
+                            }
+                        } else {
+                            end = {
+                                row: pos.row,
+                                column: pos.column + 1
+                            };
+                        }
+
+                        // We need to scan backwards until we find the start of the tag
+                        this.backwardsScanTokens(pos, (m, token) => {
+                            switch (token.name) {
+                                case TOKEN_NAME_OPEN_TAG_NAME:
+                                    isOpenTag = true;
+                                    /* falls through */
+                                case TOKEN_NAME_CLOSE_TAG_NAME:
+                                    tagNameRange = m.range;
+                                    break;
+                                case TOKEN_NAME_CLOSE_TAG_START:
+                                case TOKEN_NAME_OPEN_TAG_START:
+                                    start = m.range.start;
+                                    m.stop();
+                                    break;
+                            }
+                        });
+                        break;
+                    }
+
+                case TOKEN_NAME_OPEN_TAG_START:
+                case TOKEN_NAME_CLOSE_TAG_START:
+                    {
+                        // |<foo>  - token === TOKEN_OPEN_TAG_START
+                        // |<foo/> - token === TOKEN_OPEN_TAG_START
+                        // |</foo> - token === TOKEN_CLOSE_TAG_START
+                        // <|/foo> - token === TOKEN_CLOSE_TAG_START
+
+                        if (this.charAt(pos) === '/') {
+                            start = this.getPreviousPos(pos);
+                        } else {
+                            start = pos;
+                        }
+
+                        // We need to scan forward until we find the tag name
+                        this.scanTokens(pos, (m, token) => {
+                            switch (token.name) {
+                                case TOKEN_NAME_OPEN_TAG_NAME:
+                                    isOpenTag = true;
+                                    /* falls through */
+                                case TOKEN_NAME_CLOSE_TAG_NAME:
+                                    tagNameRange = m.range;
+                                    m.stop();
+                                    break;
+                            }
+                        });
+                        break;
+                    }
+                case TOKEN_NAME_OPEN_TAG_NAME:
+                case TOKEN_NAME_CLOSE_TAG_NAME:
+                    {
+                        // <|foo>  - token === TOKEN_OPEN_TAG_NAME
+                        // </|foo> - token === TOKEN_CLOSE_TAG_NAME
+
+                        if (token.isConcise) {
+                            isSelfClosedTag = true;
+                            // We need to scan backwards until we find the start of the tag concise
+                            // tag name (which is not delineated by a TOKEN_NAME_OPEN_TAG_START token)
+                            start = this.getTagNameStartPos(pos);
+                        } else {
+                            // We need to scan backwards until we find the start of the tag
+                            this.backwardsScanTokens(pos, (m, token) => {
+                                switch (token.name) {
+                                    case TOKEN_NAME_CLOSE_TAG_START:
+                                    case TOKEN_NAME_OPEN_TAG_START:
+                                        start = m.range.start;
+                                        m.stop();
+                                        break;
+                                }
+                            });
+                        }
+
+
+                        // Now we need to scan forward to find the complete tag name
+                        this.scanTokens(start, (m, token) => {
+                            switch (token.name) {
+                                case TOKEN_NAME_OPEN_TAG_NAME:
+                                    isOpenTag = true;
+                                    /* falls through */
+                                case TOKEN_NAME_CLOSE_TAG_NAME:
+                                    tagNameRange = m.range;
+                                    if (token.isConcise) {
+                                        end = m.range.end;
+                                    }
+                                    m.stop();
+                                    break;
+                            }
+                        });
+                        break;
+                    }
+                case TOKEN_NAME_ATTR:
+                    {
+                        // <foo |foo="">  - token === ATTR
+
+                        // We need to scan backwards until we find the start of the tag
+                        this.backwardsScanTokens(pos, (m, token) => {
+                            switch (token.name) {
+                                case TOKEN_NAME_OPEN_TAG_NAME:
+                                    tagNameRange = m.range;
+                                    if (token.isConcise) {
+                                        isSelfClosedTag = true;
+                                        m.stop();
+                                    }
+                                    break;
+                                case TOKEN_NAME_CLOSE_TAG_START:
+                                case TOKEN_NAME_OPEN_TAG_START:
+                                    start = m.range.start;
+                                    m.stop();
+                                    break;
+                            }
+                        });
+                        break;
+                    }
+                default:
+                    throw new Error('Illegal state');
+            }
         }
 
         if (!end) {
-            this.scanTokens(tagNameRange.end, (m) => {
-                switch(m.token) {
-                    case TOKEN_OPEN_TAG_END_SELF_CLOSE:
-                        isSelfClosedTag = true;
-                        /* falls through */
-                    case TOKEN_OPEN_TAG_END:
+            this.scanTokens(tagNameRange.end, (m, token) => {
+                switch (token.name) {
+                    case TOKEN_NAME_OPEN_TAG_END:
+                        isSelfClosedTag = token.isSelfClosedTag;
                         isOpenTag = true;
                         /* falls through */
-                    case TOKEN_CLOSE_TAG_END:
+                    case TOKEN_NAME_CLOSE_TAG_END:
                         end = m.range.end;
                         m.stop();
                         break;
@@ -502,18 +609,20 @@ class TagMatcher {
         }
 
         var range = new Range(start, end);
-        return new Tag(tagNameRange, range, isOpenTag, isSelfClosedTag, this.editor);
+        return new Tag(tagNameRange, range, isOpenTag, isSelfClosedTag,
+            this.editor);
     }
 
     isSelfClosedTag(pos) {
         var isSelfClosedTag = false;
 
-        this.scanTokens(pos, (m) => {
-            if (m.token === TOKEN_OPEN_TAG_END_SELF_CLOSE) {
-                isSelfClosedTag = true;
-                m.stop();
-            } else if (m.token === TOKEN_CLOSE_TAG_END || m.token === TOKEN_OPEN_TAG_END) {
-                m.stop();
+        this.scanTokens(pos, (m, token) => {
+            switch(token.name) {
+                case TOKEN_NAME_OPEN_TAG_END:
+                    isSelfClosedTag = token.isSelfClosedTag;
+                    /* falls through */
+                case TOKEN_NAME_CLOSE_TAG_END:
+                    m.stop();
             }
         });
 
@@ -541,7 +650,10 @@ class TagMatcher {
             column = column - 1;
         }
 
-        return {row, column};
+        return {
+            row,
+            column
+        };
     }
 }
 
