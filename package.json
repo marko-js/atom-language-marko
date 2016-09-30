@@ -1,6 +1,6 @@
 {
   "name": "language-marko",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Syntax highlighting for the Marko templating language",
   "repository": "https://github.com/marko-js/atom-language-marko",
   "license": "MIT",
