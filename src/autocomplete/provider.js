@@ -3,7 +3,6 @@
 // - Show left label for attribute type
 // - Add snippets for Marko Widgets
 // - Add snippets for lasso
-var markoUtil = require('../util/marko');
 var path = require('path');
 var fs = require('fs');
 var SuggestionsBuilder = require('./SuggestionsBuilder');
