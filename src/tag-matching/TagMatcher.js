@@ -96,7 +96,7 @@ class TagMatcher {
                 if (!matchingTag) {
                     return;
                 }
-                
+
                 matchedTags = new MatchedTags(matchingTag, tag, tag);
             }
         }
@@ -106,8 +106,7 @@ class TagMatcher {
     }
 
     beginWatching() {
-        this.subscriptions.add(this.editor.getBuffer().onDidChangeText((
-            event) => {
+        this.subscriptions.add(this.editor.getBuffer().onDidChangeText((event) => {
             if (this.matchedTags) {
                 var cursorPos = this.editor.getCursorBufferPosition();
                 if (this.matchedTags.activeTag.tagNameContainsCursor(
@@ -119,6 +118,12 @@ class TagMatcher {
 
             this.unhighlight();
             this.highlight();
+        }));
+
+        this.subscriptions.add(this.editor.onWillInsertText((event) => {
+            // Not sure how the inserted text will impact highlighting so unhighlight
+            // for now and we will rehighlight after the buffer is updated
+            this.unhighlight();
         }));
 
         this.subscriptions.add(this.editor.onDidChangeCursorPosition((event) => {
