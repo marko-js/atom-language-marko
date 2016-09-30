@@ -1,4 +1,4 @@
-const Inspector = require('./Inspector');
+const MarkoAutocompleteInspector = require('./MarkoAutocompleteInspector');
 const completionType = require('./completion-type');
 const markoUtil = require('../util/marko');
 const snippetPlaceholdersRegExp = /\$\{[0-9]+\:([^}]+)\}|\$\{[0-9]+\}|\$[0-9]+/g;
@@ -109,7 +109,7 @@ class SuggestionsBuilder {
     constructor(request, htmlTags) {
         ok(request, '"request" is required');
         ok(htmlTags, '"htmlTags" is required');
-        var inspector = new Inspector(request);
+        var inspector = new MarkoAutocompleteInspector(request);
 
         var inspected = this.inspected = inspector.inspect();
 
