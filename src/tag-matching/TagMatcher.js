@@ -93,6 +93,10 @@ class TagMatcher {
                 matchedTags = new MatchedTags(tag, matchingTag, tag);
             } else {
                 matchingTag = this.findMatchingOpenTag(tag.range.start);
+                if (!matchingTag) {
+                    return;
+                }
+                
                 matchedTags = new MatchedTags(matchingTag, tag, tag);
             }
         }

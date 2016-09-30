@@ -592,7 +592,7 @@ repository:
     begin: "(<)(script)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.html"
+        name: "punctuation.definition.marko-tag.begin.open.html"
       "2":
         name: "entity.name.tag.script.open.html"
     comment: "HTML style tag"
