@@ -35,6 +35,18 @@ class MatchedTags {
         }
     }
 
+    isValid() {
+        if (this.openTag && !this.openTag.isValid()) {
+            return false;
+        }
+
+        if (this.closeTag && !this.closeTag.isValid()) {
+            return false;
+        }
+
+        return true;
+    }
+
     highlight(editor) {
         this.openTag.highlight(editor);
         if (this.closeTag) {
@@ -70,9 +82,7 @@ class MatchedTags {
         var toTagName = toTag.tagName;
 
         if (toTagName != null && fromTagName !== toTagName) {
-            var tagHtml = fromTag.tagHtml;
-
-            if (fromTagName === '' || simpleTagName.test(fromTagName) && tagHtml.startsWith('<') && tagHtml.endsWith('>')) {
+            if ((fromTagName === '' || simpleTagName.test(fromTagName)) && fromTag.isValid() && toTag.isValid()) {
                 // Adjust the ranges based
                 toTag.tagName = fromTagName;
 

@@ -85,15 +85,18 @@ class TagMatcher {
         } else {
             var matchingTag;
 
-
-
             if (tag.isOpenTag) {
                 // We need to scan forward to find the matching open tag
                 matchingTag = this.findMatchingCloseTag(tag.range.end);
+                if (matchingTag && matchingTag.tagName !== tag.tagName) {
+                    matchingTag = null;
+                }
                 matchedTags = new MatchedTags(tag, matchingTag, tag);
             } else {
                 matchingTag = this.findMatchingOpenTag(tag.range.start);
                 if (!matchingTag) {
+                    return;
+                } else if (matchingTag && matchingTag.tagName !== tag.tagName) {
                     return;
                 }
 
@@ -108,11 +111,13 @@ class TagMatcher {
     beginWatching() {
         this.subscriptions.add(this.editor.getBuffer().onDidChangeText((event) => {
             if (this.matchedTags) {
-                var cursorPos = this.editor.getCursorBufferPosition();
-                if (this.matchedTags.activeTag.tagNameContainsCursor(
-                        cursorPos)) {
-                    this.matchedTags.synchronizeTagName(this.editor);
-                    return;
+                if (this.matchedTags.isValid()) {
+                    var cursorPos = this.editor.getCursorBufferPosition();
+                    if (this.matchedTags.activeTag.containsCursor(
+                            cursorPos)) {
+                        this.matchedTags.synchronizeTagName(this.editor);
+                        return;
+                    }
                 }
             }
 
@@ -121,12 +126,28 @@ class TagMatcher {
         }));
 
         this.subscriptions.add(this.editor.onWillInsertText((event) => {
-            // Not sure how the inserted text will impact highlighting so unhighlight
-            // for now and we will rehighlight after the buffer is updated
-            this.unhighlight();
+            if (this.matchedTags) {
+                if (/[<>.#]/.test(event.text)) {
+                    this.unhighlight();
+                    return;
+                }
+
+                if (!this.matchedTags.isValid()) {
+                    this.unhighlight();
+                } else {
+                    var cursorPos = this.editor.getCursorBufferPosition();
+                    if (!this.matchedTags.activeTag.containsCursor(cursorPos)) {
+                        this.unhighlight();
+                    }
+                }
+            }
         }));
 
         this.subscriptions.add(this.editor.onDidChangeCursorPosition((event) => {
+            if (event.textChanged) {
+                return;
+            }
+            
             if (this.editor.hasMultipleCursors()) {
                 this.unhighlight();
                 return;
@@ -136,8 +157,7 @@ class TagMatcher {
 
             if (this.matchedTags) {
                 let cursorPos = cursor.getBufferPosition();
-                if (this.matchedTags.activeTag.containsCursor(
-                        cursorPos)) {
+                if (this.matchedTags.activeTag.containsCursor(cursorPos)) {
                     // Nothing to do, the cursor is still within the matching tags
                     return;
                 } else {
@@ -600,6 +620,10 @@ class TagMatcher {
                 default:
                     throw new Error('Illegal state');
             }
+        }
+
+        if (!tagNameRange) {
+            return;
         }
 
         if (!end) {

@@ -77,6 +77,15 @@ class Tag {
 
         return this.editor.getTextInBufferRange(this.marker.getBufferRange());
     }
+
+    isValid() {
+        var tagHtml = this.tagHtml;
+        if (tagHtml.startsWith('<') && tagHtml.endsWith('>')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 module.exports = Tag;
