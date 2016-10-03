@@ -4,6 +4,7 @@ const lassoPackageRoot = require('lasso-package-root');
 const defaultMarkoCompiler = require('marko/compiler');
 const versionRegExp = /^[0-9]+/;
 const versionCache = {};
+const projectUtil = require('./project');
 
 function loadMarkoCompiler(dir) {
     let rootDir = lassoPackageRoot.getRootDir(dir);
@@ -37,7 +38,11 @@ function getMarkoMajorVersion(dir) {
         return null;
     }
 
-    let rootDir = lassoPackageRoot.getRootDir(dir);
+    let rootDir = lassoPackageRoot.getRootDir(dir) || projectUtil.getProjectDir();
+    if (!rootDir) {
+        return;
+    }
+
     let majorVersion = versionCache[rootDir];
     if (majorVersion === undefined) {
         var packageJsonPath = resolveFrom(rootDir, 'marko/package.json');
