@@ -7,7 +7,11 @@ const versionCache = {};
 const projectUtil = require('./project');
 
 function loadMarkoCompiler(dir) {
-    let rootDir = lassoPackageRoot.getRootDir(dir);
+    let rootDir = lassoPackageRoot.getRootDir(dir) || projectUtil.getProjectDir();
+    if (!rootDir) {
+        return;
+    }
+    
     let markoCompiler = markoCompilerCache[rootDir];
     if (!markoCompiler) {
         let markoCompilerPath = resolveFrom(rootDir, 'marko/compiler');
