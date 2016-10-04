@@ -40,6 +40,8 @@ const TOKEN_ATTR = {
     name: TOKEN_NAME_ATTR
 };
 
+const specialTagCharsRegExp = /[<>.#]/;
+
 
 var Range = require('atom').Range;
 
@@ -111,7 +113,18 @@ class TagMatcher {
     beginWatching() {
         this.subscriptions.add(this.editor.getBuffer().onDidChangeText((event) => {
             if (this.matchedTags) {
-                if (this.matchedTags.isValid()) {
+                let changes = event.changes;
+                if (changes) {
+                    for (let i=0; i<changes.length; i++) {
+                        let change = changes[i];
+                        if (change.newText && specialTagCharsRegExp.test(change.newText)){
+                            this.unhighlight();
+                            break;
+                        }
+                    }
+                }
+
+                if (this.matchedTags && this.matchedTags.isValid()) {
                     var cursorPos = this.editor.getCursorBufferPosition();
                     if (this.matchedTags.activeTag.containsCursor(
                             cursorPos)) {
@@ -127,7 +140,7 @@ class TagMatcher {
 
         this.subscriptions.add(this.editor.onWillInsertText((event) => {
             if (this.matchedTags) {
-                if (/[<>.#]/.test(event.text)) {
+                if (specialTagCharsRegExp.test(event.text)) {
                     this.unhighlight();
                     return;
                 }
@@ -147,7 +160,7 @@ class TagMatcher {
             if (event.textChanged) {
                 return;
             }
-            
+
             if (this.editor.hasMultipleCursors()) {
                 this.unhighlight();
                 return;
