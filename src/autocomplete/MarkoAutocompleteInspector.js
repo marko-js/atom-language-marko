@@ -3,13 +3,13 @@ var scopeType = require('./scope-type');
 
 var tagShorthandRegExp = /([a-zA-Z0-9_-]+)[#.][a-zA-Z0-9_#.:-]+/;
 
-var prefixRegExp = /[A-Za-z0-9_\-\.\#]+$/;
+var prefixRegExp = /[@A-Za-z0-9_\-\.\#]+$/;
 
-var tagNameCharsRegExp = /[a-zA-Z0-9_#.:-]/;
+var tagNameCharsRegExp = /[@a-zA-Z0-9_#.:-]/;
 
-var tagNameRegExp = /[a-zA-Z0-9.\-:#]+$/;
+var tagNameRegExp = /[@a-zA-Z0-9.\-:#]+$/;
 
-var endingTagRegExp = /<\/([a-zA-Z0-9.\-:#]+)?$/;
+var endingTagRegExp = /<\/([@a-zA-Z0-9.\-:#]+)?$/;
 
 var endingTagBracketRegExp = /^\s*>/;
 
@@ -18,7 +18,7 @@ var attrNameCharsRegExp = /[a-zA-Z0-9_#.:-]/;
 var attrNameRegExp = /[a-zA-Z0-9.\-:]+$/;
 
 var attrCompletionRegExp = /([a-zA-Z0-9.\-:]+)(=["'][A-Za-z0-9_\-\.\#]*)?$/;
-var tagCompletionRegExp = /([a-zA-Z0-9.\-:#]+)$/;
+var tagCompletionRegExp = /([@a-zA-Z0-9.\-:#]+)$/;
 
 const SCOPE_TAG_HTML = { type: scopeType.TAG, concise: false  };
 const SCOPE_TAG_CONCISE = { type: scopeType.TAG, concise: true  };

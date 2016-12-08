@@ -1,5 +1,5 @@
 'use strict';
-var simpleTagName = /^[a-zA-Z0-9\-:]+$/;
+var simpleTagName = /^[@a-zA-Z0-9\-:]+$/;
 
 class MatchedTags {
     constructor(openTag, closeTag, activeTag) {
