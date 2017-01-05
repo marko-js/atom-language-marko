@@ -3,11 +3,14 @@
 var tagNameCharsRegExp = /[a-zA-Z0-9_.:-]/;
 var tagNameRegExp = /[a-zA-Z0-9.\-:#]+$/;
 var attrNameCharsRegExp = /[a-zA-Z0-9_#.:-]/;
-var attrNameRegExp = /[a-zA-Z0-9.\-:]+$/;
+var attrNameRegExp = /([a-zA-Z0-9.\-:]+)(\s*\(|$)/;
+var stateVarRegExp = /^state(\b|$)/;
+var dataVarRegExp = /^data(\b|$)/;
 
 var SCOPE_ATTR = 'attr';
 var SCOPE_TAG = 'tag';
 var SCOPE_STRING = 'string';
+var SCOPE_MARKO = 'marko';
 
 class Inspector {
     constructor(textEditor, text, range) {
@@ -22,10 +25,18 @@ class Inspector {
 
         var scopeType = this.getScopeType(scopeNames);
 
+        var hasArgument = false;
+
+        var text = this.text.replace(/\s*\($/, function() {
+            hasArgument = true;
+            return '';
+        });
+
         if (scopeType === SCOPE_TAG) {
             return {
                 range: this.range,
-                tagName: this.text
+                tagName: text,
+                tagHasArgument: hasArgument
             };
         } else if (scopeType === SCOPE_ATTR) {
             let tagName = this.getTagNameFromPos(pos);
@@ -33,22 +44,22 @@ class Inspector {
                 return {
                     range: this.range,
                     tagName,
-                    attributeName: this.text
+                    attributeName: text,
+                    attributeHasArgument: hasArgument
                 };
             }
         } else if (scopeType === SCOPE_STRING) {
-            var text = this.text;
             if (text.charAt(0) === '"' || text.charAt(0) === "'") {
-                try {
-                    text = JSON.parse(text);
-                } catch(e) {}
+                text = text.substring(1, text.length - 1);
             }
-            let attrName = this.getAttrNameFromPos(pos);
-            if (attrName) {
+
+            let attrInfo = this.getAttrInfoFromPos(pos);
+            if (attrInfo) {
                 return {
                     range: this.range,
-                    attributeName: attrName,
-                    literalValue: text
+                    attributeName: attrInfo.name,
+                    literalValue: text,
+                    attributeHasArgument: attrInfo.hasArgument
                 };
             } else {
                 return {
@@ -56,10 +67,24 @@ class Inspector {
                     literalValue: text
                 };
             }
+        } else if (scopeType === SCOPE_MARKO) {
+            if (stateVarRegExp.test(text)) {
+                return {
+                    stateVar: true
+                };
+            } else if (dataVarRegExp.test(text)) {
+                return {
+                    dataVar: true
+                };
+            }
         }
     }
 
     getScopeType(scopeNames) {
+        if (scopeNames.length === 1 && scopeNames[0] === 'text.marko') {
+            return SCOPE_MARKO;
+        }
+
         for (var i=0; i<scopeNames.length; i++) {
             var scopeName = scopeNames[i];
 
@@ -146,7 +171,7 @@ class Inspector {
         return null;
     }
 
-    getAttrNameFromPos(pos) {
+    getAttrInfoFromPos(pos) {
         let curPos = pos;
 
         while(curPos) {
@@ -156,7 +181,10 @@ class Inspector {
                     let line = this.lineUpToPos(curPos, true /*inclusive*/);
                     var attrNameMatches = attrNameRegExp.exec(line);
                     if (attrNameMatches) {
-                        return attrNameMatches[0];
+                        return {
+                            name: attrNameMatches[1],
+                            hasArgument: attrNameMatches[1] != null
+                        };
                     }
                 }
             }

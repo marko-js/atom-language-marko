@@ -41,55 +41,121 @@ patterns: [
   }
 ]
 repository:
-  "attr-stuff":
+  "attr-assignment-concise":
+    applyEndPatternLast: 1
+    begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
+    beginCaptures:
+      "1":
+        name: "support.function.marko-attribute"
+      "2":
+        name: "entity.other.attribute-name.html"
+      "3":
+        name: "entity.other.attribute-name.html"
+      "4":
+        name: "support.function.marko-attribute"
+      "5":
+        name: "punctuation.separator.key-value.html"
+    end: "(?=[,;]|\\s|$)"
+    patterns: [
+      {
+        include: "#expression"
+      }
+    ]
+  "attr-assignment-html":
+    applyEndPatternLast: 1
+    begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
+    beginCaptures:
+      "1":
+        name: "support.function.marko-attribute"
+      "2":
+        name: "entity.other.attribute-name.html"
+      "3":
+        name: "entity.other.attribute-name.html"
+      "4":
+        name: "support.function.marko-attribute"
+      "5":
+        name: "punctuation.separator.key-value.html"
+    end: "(?=[,;]|\\s|/>|>)"
+    patterns: [
+      {
+        include: "#expression-no-gt"
+      }
+    ]
+  "attr-no-value":
+    captures:
+      "1":
+        name: "entity.other.attribute-name.html"
+      "2":
+        name: "entity.other.attribute-name.html"
+      "3":
+        name: "support.function.marko-attribute"
+    match: "\\s+(?:([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([a-zA-Z0-9][a-zA-Z0-9:_.-]+))(?=\\s|/>|>|$)"
+  "attr-stuff-concise":
     patterns: [
       {
         begin: "\\s[\\[]"
         end: "[\\]]"
         patterns: [
           {
-            include: "#attr-stuff"
+            include: "#attr-stuff-concise"
           }
         ]
       }
       {
-        captures:
-          "1":
-            name: "support.function.marko-attribute"
-        match: "\\s([a-zA-Z0-9:_-]+)(?=([(]))"
+        include: "#attr-with-arg"
       }
       {
-        captures:
-          "1":
-            name: "support.function.marko-attribute"
-        match: "\\s(else|w-[a-zA-Z0-9:_-]+|marko-[a-zA-Z0-9:_.-]+)(?=(\\s|$|[>(]|/>))"
+        include: "#attr-assignment-concise"
       }
       {
-        captures:
-          "1":
-            name: "support.function.marko-attribute"
-        match: "\\s(w-[a-zA-Z0-9:_-]+|ref|no-update|no-update-body|lasso-[a-zA-Z0-9:_.-]+)(?=(\\s|$|[>(=]|/>))"
-      }
-      {
-        captures:
-          "1":
-            name: "entity.other.attribute-name.html"
-        match: "\\s([a-zA-Z0-9:_.][a-zA-Z0-9:_.-]*)"
-      }
-      {
-        captures:
-          "0":
-            name: "punctuation.separator.key-value.html"
-        match: "[=]"
-      }
-      {
-        include: "#expression-common"
-      }
-      {
-        include: "#expression-operator-no-gt"
+        include: "#attr-no-value"
       }
       {
         include: "#placeholder"
+      }
+      {
+        include: "#js-block"
+      }
+      {
+        include: "#expression"
+      }
+    ]
+  "attr-stuff-html":
+    patterns: [
+      {
+        include: "#attr-with-arg"
+      }
+      {
+        include: "#attr-assignment-html"
+      }
+      {
+        include: "#attr-no-value"
+      }
+      {
+        include: "#placeholder"
+      }
+      {
+        include: "#js-block"
+      }
+      {
+        include: "#expression-no-gt"
+      }
+    ]
+  "attr-with-arg":
+    applyEndPatternLast: 1
+    begin: "\\s+([_a-zA-Z0-9][a-zA-Z0-9:_.-]+)(\\()"
+    beginCaptures:
+      "1":
+        name: "support.function.marko-attribute"
+      "2":
+        name: "meta.brace.round.js"
+    end: "\\)"
+    endCaptures:
+      "1":
+        name: "meta.brace.round.js"
+    patterns: [
+      {
+        include: "#expression"
       }
     ]
   cdata:
@@ -144,7 +210,7 @@ repository:
         include: "#expression-common"
       }
       {
-        include: "#expression-operator"
+        include: "#expression-operator-gt"
       }
     ]
   "expression-common":
@@ -175,10 +241,16 @@ repository:
         include: "#expression-numeric"
       }
       {
-        include: "#expression-special-class"
+        include: "#expression-operator-unary"
       }
       {
-        include: "#expression-special-operator"
+        include: "#expression-operator-binary"
+      }
+      {
+        include: "#expression-operator-special"
+      }
+      {
+        include: "#expression-special-class"
       }
     ]
   "expression-constant":
@@ -197,20 +269,22 @@ repository:
         name: "constant.language.undefined.js"
     match: "(true)|(false)|(Infinity)|(NaN)|(null)|(undefined)"
   "expression-group-braces":
-    begin: "\\["
+    applyEndPatternLast: 1
+    begin: "\\{"
     beginCaptures:
       "0":
-        name: "meta.brace.curly.js"
-    end: "\\]"
+        name: "punctuation.section.scope.begin.js"
+    end: "\\}"
     endCaptures:
       "0":
-        name: "meta.brace.curly.js"
+        name: "punctuation.section.scope.end.js"
     patterns: [
       {
         include: "#expression"
       }
     ]
   "expression-group-brackets":
+    applyEndPatternLast: 1
     begin: "\\["
     beginCaptures:
       "0":
@@ -225,6 +299,7 @@ repository:
       }
     ]
   "expression-group-parens":
+    applyEndPatternLast: 1
     begin: "\\("
     beginCaptures:
       "0":
@@ -241,6 +316,13 @@ repository:
   "expression-hex":
     match: "\\b0[xX]\\h+\\b"
     name: "constant.numeric.hex.js"
+  "expression-no-gt":
+    comment: "A JavaScript expression"
+    patterns: [
+      {
+        include: "#expression-common"
+      }
+    ]
   "expression-numeric":
     match: '''
       (?x)
@@ -256,18 +338,25 @@ repository:
       			
     '''
     name: "constant.numeric.js"
-  "expression-operator":
-    match: "!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\\|\\||\\?\\:|\\*=|(?<!\\()/=|%=|\\+=|\\-=|&=|\\^="
+  "expression-operator-binary":
+    captures:
+      "2":
+        name: "keyword.operator.js"
+    match: "(\\s+|\\b)(===|==|!==|!=|<=|<<|&&|\\|\\||<|\\+=|-=|\\*=|/=|%=|[=+*/%|&~^])(\\s+|\\b)"
+  "expression-operator-gt":
+    captures:
+      "2":
+        name: "keyword.operator.js"
+    match: "(\\s+|\\b)(>=|>>|>)(\\s+|\\b)"
+  "expression-operator-special":
+    match: "(?<!\\.|\\$)\\b(delete|in|instanceof|new|typeof\\s*|void|with)\\b(?!\\$)"
     name: "keyword.operator.js"
-  "expression-operator-no-gt":
-    match: "!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|~|===|==|=|!=|!==|<=|<<=|<>|<|!|&&|\\|\\||\\?\\:|\\*=|(?<!\\()/=|%=|\\+=|\\-=|&=|\\^="
+  "expression-operator-unary":
+    match: "\\b(!|\\+\\+)\\b|\\b\\-\\-(?<!\\s)"
     name: "keyword.operator.js"
   "expression-special-class":
     match: "(?<!\\.|\\$)\\b(Array|Boolean|Date|Error|EvalError|Function|Number|Object|RangeError|ReferenceError|RegExp|String|SyntaxError|TypeError|URIError)\\b(?!\\$)"
     name: "support.class.js"
-  "expression-special-operator":
-    match: "(?<!\\.|\\$)\\b(delete|in|instanceof|new|typeof|void|with)\\b(?!\\$)"
-    name: "keyword.operator.js"
   "expression-string-double":
     begin: "\""
     beginCaptures:
@@ -316,11 +405,11 @@ repository:
       }
     ]
   "html-block-concise":
-    begin: "(\\s*-[-]+)"
+    begin: "(\\s*)(-[-]+)\\n"
     captures:
-      "1":
+      "2":
         name: "punctuation.separator"
-    end: "(\\1)[.]*$"
+    end: "^(\\1\\2|(?!(\\1)))"
     name: "meta.section.marko-html-block"
     patterns: [
       {
@@ -337,7 +426,7 @@ repository:
       }
     ]
   "html-line-concise":
-    begin: "\\s*(-)"
+    begin: "\\s*([-][-]+)"
     beginCaptures:
       "1":
         name: "punctuation.separator"
@@ -354,6 +443,21 @@ repository:
       }
       {
         include: "#placeholder-patterns"
+      }
+    ]
+  "js-block":
+    applyEndPatternLast: 1
+    begin: "\\{"
+    beginCaptures:
+      "0":
+        name: "punctuation.section.scope.begin.js"
+    end: "\\}"
+    endCaptures:
+      "0":
+        name: "punctuation.section.scope.end.js"
+    patterns: [
+      {
+        include: "source.js"
       }
     ]
   "open-tag-end":
@@ -411,6 +515,7 @@ repository:
       }
     ]
   placeholder:
+    applyEndPatternLast: 1
     begin: "[$][!]?\\{"
     captures:
       "0":
@@ -501,7 +606,7 @@ repository:
         include: "#html-line-concise"
       }
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-concise"
       }
     ]
   "tag-name-custom-concise":
@@ -516,7 +621,7 @@ repository:
         include: "#html-line-concise"
       }
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-concise"
       }
     ]
   "tag-name-custom-html":
@@ -539,7 +644,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end"
@@ -565,7 +670,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end"
@@ -585,7 +690,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
     ]
   "tag-name-script-html":
@@ -608,7 +713,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end-script"
@@ -638,7 +743,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end"
@@ -664,7 +769,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end"
@@ -690,7 +795,7 @@ repository:
         name: "punctuation.definition.marko-tag.end.self-close.html"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end-style"
@@ -724,7 +829,7 @@ repository:
     name: "meta.tag.other"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-concise"
       }
       {
         include: "#tag-script-body-line"
@@ -734,7 +839,7 @@ repository:
       }
     ]
   "tag-style-body-block":
-    begin: "(\\s*-[-]+)"
+    begin: "(\\s*[-][-]+)"
     comment: "HTML script tag with nested JavaScript code"
     end: "(\\1)[.]*$"
     patterns: [
@@ -743,8 +848,8 @@ repository:
       }
     ]
   "tag-style-body-line":
-    begin: "\\s-\\s"
-    comment: "HTML script tag with nested JavaScript code"
+    begin: "\\s[-][-]+\\s"
+    comment: "HTML style tag with nested CSS code"
     end: "$"
     patterns: [
       {
@@ -761,7 +866,7 @@ repository:
     name: "meta.tag.other"
     patterns: [
       {
-        include: "#attr-stuff"
+        include: "#attr-stuff-concise"
       }
       {
         include: "#tag-style-body-line"

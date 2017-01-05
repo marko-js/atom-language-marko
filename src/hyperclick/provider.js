@@ -1,4 +1,8 @@
-const markoWidgetsEventAttrRegExp = /^w-on/;
+const legacyMarkoWidgetsEventAttrRegExp = /^w-on/;
+const eventAttrRegExp = /^on/;
+const initStateRegExp = /this\.state\s*[=]/g;
+const getTemplateDataRegExp = /getTemplateData/g;
+
 const path = require('path');
 const fs = require('fs');
 const lassoPackageRoot = require('lasso-package-root');
@@ -40,11 +44,11 @@ function isMarkoWidgetsEventAttr(inspected) {
         return false;
     }
 
-    if (markoWidgetsEventAttrRegExp.test(attrName)) {
-        return true;
+    if (inspected.attributeHasArgument) {
+        return eventAttrRegExp.test(attrName);
+    } else {
+        legacyMarkoWidgetsEventAttrRegExp.test(attrName);
     }
-
-    return false;
 }
 
 function resolveFilePath(inspected, textEditor) {
@@ -82,20 +86,20 @@ function resolveFilePath(inspected, textEditor) {
     return null;
 }
 
+var widgetFiles = ['component.js', 'widget.js', 'index.js'];
+
 function getWidgetFilePath(textEditor) {
     let editorFilePath = textEditor.getPath();
     let dir = path.dirname(editorFilePath);
-    let widgetPath = path.join(dir, 'widget.js');
-    if (fs.existsSync(widgetPath)) {
-        return widgetPath;
+
+    for (var i=0; i<widgetFiles.length; i++) {
+        var pathToTest = path.join(dir, widgetFiles[i]);
+        if (fs.existsSync(pathToTest)) {
+            return pathToTest;
+        }
     }
 
-    widgetPath = path.join(dir, 'index.js');
-    if (fs.existsSync(widgetPath)) {
-        return widgetPath;
-    }
-
-    return;
+    return textEditor.getPath();
 }
 
 function getTaglibLookup(textEditor) {
@@ -219,9 +223,29 @@ function openMarkoWidgetsEventHandler(filePath, handlerName) {
         });
 }
 
+function openStateInit(filePath) {
+    return openFile(filePath)
+        .then((textEditor) => {
+            textEditor.scan(initStateRegExp, (result) => {
+                textEditor.setCursorBufferPosition(result.range.start);
+                result.stop();
+            });
+        });
+}
+
+function openGetTemplateData(filePath) {
+    return openFile(filePath)
+        .then((textEditor) => {
+            textEditor.scan(getTemplateDataRegExp, (result) => {
+                textEditor.setCursorBufferPosition(result.range.start);
+                result.stop();
+            });
+        });
+}
+
 let provider = {
     providerName: "hyperclick-marko",
-    wordRegExp: /'(?:[^']|\\')*'|"(?:[^"]|\\")*"|[a-zA-Z0-9.\-:.]+/g,
+    wordRegExp: /'(?:[^']|\\')*'|"(?:[^"]|\\")*"|[a-zA-Z0-9.\-:.]+(\s*\()?/g,
     getSuggestionForWord(textEditor, text, range) {
         if (!isMarkoEditor(textEditor)) {
             return;
@@ -309,6 +333,30 @@ let provider = {
                 range,
                 callback() {
                     openFile(tagFile);
+                }
+            };
+        } else if (inspected.stateVar) {
+            let widgetFilePath = getWidgetFilePath(textEditor);
+            if (!widgetFilePath) {
+                return;
+            }
+
+            return {
+                range,
+                callback() {
+                    openStateInit(widgetFilePath);
+                }
+            };
+        } else if (inspected.dataVar) {
+            let widgetFilePath = getWidgetFilePath(textEditor);
+            if (!widgetFilePath) {
+                return;
+            }
+
+            return {
+                range,
+                callback() {
+                    openGetTemplateData(widgetFilePath);
                 }
             };
         }
