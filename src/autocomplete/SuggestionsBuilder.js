@@ -241,7 +241,7 @@ class SuggestionsBuilder {
             var taglibLookup = this.taglibLookup;
 
             taglibLookup.getTagsSorted().forEach((tag) => {
-                if (tag.name.indexOf('*') !== -1 || tag.name.startsWith('_')) {
+                if (tag.deprecated || tag.name.indexOf('*') !== -1 || tag.name.startsWith('_')) {
                     return;
                 }
 
@@ -272,7 +272,7 @@ class SuggestionsBuilder {
         var markoMajorVersion = this.markoMajorVersion;
         if (markoMajorVersion == null || markoMajorVersion >= 3) {
             this.taglibLookup.forEachAttribute(tagName, (attr, tag) => {
-                if (attr.name === '*' || attr.name.startsWith('_')) {
+                if (attr.deprecated || attr.name === '*' || attr.name.startsWith('_')) {
                     return;
                 }
 
