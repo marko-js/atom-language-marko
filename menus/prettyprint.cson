@@ -1,0 +1,18 @@
+'menu': [
+  'label': 'Packages'
+  'submenu': [
+    'label': 'Marko'
+    'submenu': [
+      {
+        'label': 'Prettyprint'
+        'command': 'language-marko:prettyprint'
+      }
+    ]
+  ]
+]
+
+'context-menu':
+  'atom-workspace atom-text-editor[data-grammar*="marko"]':
+    [{label: 'Prettyprint (Marko)', command: 'language-marko:prettyprint'}]
+  '.tree-view .file .name[data-name$=\\.marko]':
+    [{label: 'Prettyprint (Marko)', command:  'language-marko:prettyprint'}]
