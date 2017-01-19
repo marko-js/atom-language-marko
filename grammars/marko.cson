@@ -52,9 +52,9 @@ patterns: [
 repository:
   "assignment-concise":
     applyEndPatternLast: 1
-    begin: "^\\s*"
+    begin: "^\\s*[$_A-Za-z]+"
     beginCaptures: {}
-    comment: "A concise tag name"
+    comment: "A concise JavaScript assignment line"
     end: "$"
     patterns: [
       {
@@ -70,7 +70,7 @@ repository:
     beginCaptures:
       "1":
         name: "punctuation.definition.marko-tag.begin.open.html"
-    comment: "A concise tag name"
+    comment: "An HTML JavaScript assignment tag"
     end: "(/>)"
     endCaptures:
       "1":
