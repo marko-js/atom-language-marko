@@ -4,7 +4,10 @@ fileTypes: [
 name: "Marko"
 patterns: [
   {
-    include: "#comment-concise"
+    include: "#comment-concise-line"
+  }
+  {
+    include: "#comment-concise-block"
   }
   {
     include: "#comment-html"
@@ -39,8 +42,47 @@ patterns: [
   {
     include: "#scriptlet"
   }
+  {
+    include: "#assignment-html"
+  }
+  {
+    include: "#assignment-concise"
+  }
 ]
 repository:
+  "assignment-concise":
+    applyEndPatternLast: 1
+    begin: "^\\s*"
+    beginCaptures: {}
+    comment: "A concise tag name"
+    end: "$"
+    patterns: [
+      {
+        include: "#html-line-concise"
+      }
+      {
+        include: "#attr-stuff-concise"
+      }
+    ]
+  "assignment-html":
+    applyEndPatternLast: 1
+    begin: "(<)"
+    beginCaptures:
+      "1":
+        name: "punctuation.definition.marko-tag.begin.open.html"
+    comment: "A concise tag name"
+    end: "(/>)"
+    endCaptures:
+      "1":
+        name: "punctuation.definition.marko-tag.end.self-close.html"
+    patterns: [
+      {
+        include: "#html-line-concise"
+      }
+      {
+        include: "#attr-stuff-concise"
+      }
+    ]
   "attr-assignment-concise":
     applyEndPatternLast: 1
     begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
@@ -55,7 +97,7 @@ repository:
         name: "support.function.marko-attribute"
       "5":
         name: "punctuation.separator.key-value.html"
-    end: "(?=[,;]|\\s|$)"
+    end: "(?=([,;]|\\s|$))"
     patterns: [
       {
         include: "#expression"
@@ -63,7 +105,7 @@ repository:
     ]
   "attr-assignment-html":
     applyEndPatternLast: 1
-    begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
+    begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z0-9-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
     beginCaptures:
       "1":
         name: "support.function.marko-attribute"
@@ -89,9 +131,29 @@ repository:
         name: "entity.other.attribute-name.html"
       "3":
         name: "support.function.marko-attribute"
-    match: "\\s+(?:([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([a-zA-Z0-9][a-zA-Z0-9:_.-]+))(?=\\s|/>|>|$)"
+    match: "\\s+(?:([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z0-9-]*)|([a-zA-Z0-9][a-zA-Z0-9:_.-]+))(?=\\s|/>|>|$)"
+  "attr-semicolon":
+    begin: "([;])"
+    beginCaptures:
+      "1":
+        name: "punctuation.terminator.statement.js"
+    end: "$"
+    patterns: [
+      {
+        include: "#comment-line"
+      }
+      {
+        include: "#comment-block"
+      }
+    ]
   "attr-stuff-concise":
     patterns: [
+      {
+        include: "#comment-line"
+      }
+      {
+        include: "#comment-block"
+      }
       {
         begin: "\\s[\\[]"
         end: "[\\]]"
@@ -100,6 +162,10 @@ repository:
             include: "#attr-stuff-concise"
           }
         ]
+      }
+      {
+        begin: "[,]\\s*$"
+        end: "(?=\\s)"
       }
       {
         include: "#attr-with-arg"
@@ -119,9 +185,15 @@ repository:
       {
         include: "#expression"
       }
+      {
+        include: "#attr-semicolon"
+      }
     ]
   "attr-stuff-html":
     patterns: [
+      {
+        include: "#comment-block"
+      }
       {
         include: "#attr-with-arg"
       }
@@ -139,6 +211,9 @@ repository:
       }
       {
         include: "#expression-no-gt"
+      }
+      {
+        include: "#attr-semicolon"
       }
     ]
   "attr-with-arg":
@@ -168,7 +243,27 @@ repository:
       "0":
         name: "punctuation.definition.string.end.xml"
     name: "string.unquoted.cdata.xml"
-  "comment-concise":
+  "comment-block":
+    begin: "/\\*"
+    beginCaptures:
+      "0":
+        name: "punctuation.definition.comment.begin.js"
+    end: "\\*/"
+    endCaptures:
+      "0":
+        name: "punctuation.definition.comment.end.js"
+    name: "comment.block.js"
+  "comment-concise-block":
+    begin: "^(\\s*)/\\*"
+    beginCaptures:
+      "0":
+        name: "punctuation.definition.comment.begin.js"
+    end: "\\*/.*"
+    endCaptures:
+      "0":
+        name: "punctuation.definition.comment.end.js"
+    name: "comment.block.js"
+  "comment-concise-line":
     begin: "^(\\s*)//"
     comment: "Single line comment (concise)"
     end: "$"
@@ -180,6 +275,22 @@ repository:
         name: "punctuation.definition.comment.html"
     end: "-->"
     name: "comment.block.html"
+  "comment-line":
+    begin: "(^[ \\t]+)?(?=//)"
+    beginCaptures:
+      "1":
+        name: "punctuation.whitespace.comment.leading.js"
+    end: "(?!\\G)"
+    patterns: [
+      {
+        begin: "//"
+        beginCaptures:
+          "0":
+            name: "punctuation.definition.comment.js"
+        end: "\\n"
+        name: "comment.line.double-slash.js"
+      }
+    ]
   doctype:
     begin: "<!"
     captures:
@@ -591,9 +702,13 @@ repository:
       {
         include: "#tag-name-html"
       }
+      {
+        include: "#assignment-html"
+      }
     ]
   "tag-name-concise":
-    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_.#-]*)?)(?=(\\s|$|\\())"
+    applyEndPatternLast: 1
+    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_.#-]*)?)(?=(\\s+(?![=])|$|\\())"
     beginCaptures:
       "1":
         name: "entity.name.tag.concise"
@@ -610,7 +725,8 @@ repository:
       }
     ]
   "tag-name-custom-concise":
-    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*|[@][a-zA-Z0-9_]+)(?=(\\s|$|[(]))"
+    applyEndPatternLast: 1
+    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*|[@][a-zA-Z0-9_]+)(?=(\\s+(?![=])|$|[(]))"
     beginCaptures:
       "1":
         name: "support.function.marko-tag.concise"
@@ -720,7 +836,7 @@ repository:
       }
     ]
   "tag-name-shorthand-html":
-    begin: "(<)(([a-zA-Z0-9_-]+)([#.][a-zA-Z0-9_#.:-]+))(?=(>|/>|\\s|\\())"
+    begin: "(<)(([a-zA-Z0-9_-]+)([#.][a-zA-Z0-9_#.:-]+))(?=(>|/>|\\s+(?![=])|\\())"
     beginCaptures:
       "1":
         name: "punctuation.definition.marko-tag.begin.open.html"
@@ -820,6 +936,7 @@ repository:
       }
     ]
   "tag-script-concise":
+    applyEndPatternLast: 1
     begin: "^(\\s*)(script)(?=(\\s|$|\\())"
     beginCaptures:
       "2":
@@ -857,6 +974,7 @@ repository:
       }
     ]
   "tag-style-concise":
+    applyEndPatternLast: 1
     begin: "^(\\s*)(style)(?=(\\s|$|\\())"
     beginCaptures:
       "2":
