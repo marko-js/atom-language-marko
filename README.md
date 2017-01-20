@@ -6,6 +6,17 @@ Adds syntax highlighting, autocompletion, hyperclick and tag matching to [Marko]
 
 Contributions are greatly appreciated. Please fork this repository and open a pull request to add snippets, make grammar tweaks, etc.
 
+# Overview
+
+Features overview:
+
+- Syntax highlighting
+- Tag matching
+- Tag and attribute autocompletion
+- Code snippets
+- Hyperclick (clickable tags and attributes)
+- Prettyprinting ([marko-prettyprint](https://github.com/marko-js/marko-prettyprint) is used internally)
+
 # Installation
 
 ```
@@ -72,6 +83,12 @@ The package provides a [hyperclick](https://github.com/facebooknuclideapm/hyperc
 ## Clickable Marko Widgets event handler methods
 
 ![Clickable Marko Widgets event handler methods](https://cloud.githubusercontent.com/assets/978214/16811040/c3739830-48e3-11e6-981f-4cbc0133d6a2.gif)
+
+## Prettyprint
+
+![Prettyprint](https://cloud.githubusercontent.com/assets/978214/22164152/444024a4-df13-11e6-94cc-bb90123dcb0f.gif)
+
+NOTE: Prettyprinting should be configured by adding `.marko-prettyprint` and/or `.editorconfig` files to your project. Please see: [marko-prettyprint - Configuration files](https://github.com/marko-js/marko-prettyprint#configuration-files)
 
 # License
 
