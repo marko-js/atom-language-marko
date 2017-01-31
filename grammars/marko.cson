@@ -600,6 +600,22 @@ repository:
         ]
       }
       {
+        applyEndPatternLast: 1
+        begin: "\\("
+        beginCaptures:
+          "0":
+            name: "punctuation.section.scope.begin.js"
+        end: "\\)"
+        endCaptures:
+          "0":
+            name: "punctuation.section.scope.end.js"
+        patterns: [
+          {
+            include: "#js"
+          }
+        ]
+      }
+      {
         include: "#expression"
       }
       {
