@@ -651,6 +651,10 @@ repository:
         name: "entity.name.type"
       }
       {
+        match: "this"
+        name: "variable.language.js"
+      }
+      {
         begin: "([\\p{L}\\p{Nl}$_][\\p{L}\\p{Nl}$\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\x{200C}\\x{200D}]*)\\s*(\\()(?=(?:[^\\(\\)]*)?\\)\\s*\\{)"
         beginCaptures:
           "1":
