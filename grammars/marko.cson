@@ -651,7 +651,7 @@ repository:
         name: "entity.name.type"
       }
       {
-        match: "this"
+        match: "this|arguments"
         name: "variable.language.js"
       }
       {
