@@ -4,6 +4,15 @@ fileTypes: [
 name: "Marko"
 patterns: [
   {
+    include: "#scriptlet"
+  }
+  {
+    include: "#special-js-tags"
+  }
+  {
+    include: "#js-code-block"
+  }
+  {
     include: "#comment-concise-line"
   }
   {
@@ -40,9 +49,6 @@ patterns: [
     include: "#placeholder-patterns"
   }
   {
-    include: "#scriptlet"
-  }
-  {
     include: "#assignment-html"
   }
   {
@@ -55,7 +61,7 @@ repository:
     begin: "^\\s*[$_A-Za-z]+"
     beginCaptures: {}
     comment: "A concise JavaScript assignment line"
-    end: "$"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "#html-line-concise"
@@ -123,6 +129,21 @@ repository:
         include: "#expression-no-gt"
       }
     ]
+  "attr-js-block":
+    applyEndPatternLast: 1
+    begin: "\\s\\{"
+    beginCaptures:
+      "0":
+        name: "punctuation.section.scope.begin.js"
+    end: "\\}"
+    endCaptures:
+      "0":
+        name: "punctuation.section.scope.end.js"
+    patterns: [
+      {
+        include: "#js"
+      }
+    ]
   "attr-no-value":
     captures:
       "1":
@@ -133,11 +154,12 @@ repository:
         name: "support.function.marko-attribute"
     match: "\\s+(?:([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z0-9-]*)|([a-zA-Z0-9][a-zA-Z0-9:_.-]+))(?=\\s|/>|>|$)"
   "attr-semicolon":
+    applyEndPatternLast: 1
     begin: "([;])"
     beginCaptures:
       "1":
         name: "punctuation.terminator.statement.js"
-    end: "$"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "#comment-line"
@@ -180,7 +202,7 @@ repository:
         include: "#placeholder"
       }
       {
-        include: "#js-block"
+        include: "#attr-js-block"
       }
       {
         include: "#expression"
@@ -207,7 +229,7 @@ repository:
         include: "#placeholder"
       }
       {
-        include: "#js-block"
+        include: "#attr-js-block"
       }
       {
         include: "#expression-no-gt"
@@ -276,21 +298,12 @@ repository:
     end: "-->"
     name: "comment.block.html"
   "comment-line":
-    begin: "(^[ \\t]+)?(?=//)"
+    begin: "(//)"
     beginCaptures:
       "1":
-        name: "punctuation.whitespace.comment.leading.js"
-    end: "(?!\\G)"
-    patterns: [
-      {
-        begin: "//"
-        beginCaptures:
-          "0":
-            name: "punctuation.definition.comment.js"
-        end: "\\n"
-        name: "comment.line.double-slash.js"
-      }
-    ]
+        name: "punctuation.definition.comment.js"
+    end: "(?=\\n)"
+    name: "comment.line.double-slash.js"
   doctype:
     begin: "<!"
     captures:
@@ -453,7 +466,7 @@ repository:
     captures:
       "2":
         name: "keyword.operator.js"
-    match: "(\\s+|\\b)(===|==|!==|!=|<=|<<|&&|\\|\\||<|\\+=|-=|\\*=|/=|%=|[=+*/%|&~^])(\\s+|\\b)"
+    match: "(\\s+|\\b)(===|==|!==|!=|<=|<<|&&|\\|\\||<|\\+=|-=|\\*=|/=|%=|[=+*/%|&~^:])(\\s+|\\b)"
   "expression-operator-gt":
     captures:
       "2":
@@ -519,7 +532,7 @@ repository:
     begin: "(\\s*)(-[-]+)\\n"
     captures:
       "2":
-        name: "punctuation.separator"
+        name: "keyword.operator.marko"
     end: "^(\\1\\2|(?!(\\1)))"
     name: "meta.section.marko-html-block"
     patterns: [
@@ -533,6 +546,12 @@ repository:
         include: "#comment-html"
       }
       {
+        include: "#js-code-line"
+      }
+      {
+        include: "#js-code-block"
+      }
+      {
         include: "#placeholder-patterns"
       }
     ]
@@ -540,8 +559,8 @@ repository:
     begin: "\\s*([-][-]+)"
     beginCaptures:
       "1":
-        name: "punctuation.separator"
-    end: "$"
+        name: "keyword.operator.marko"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "#cdata"
@@ -556,19 +575,90 @@ repository:
         include: "#placeholder-patterns"
       }
     ]
-  "js-block":
-    applyEndPatternLast: 1
-    begin: "\\{"
-    beginCaptures:
-      "0":
-        name: "punctuation.section.scope.begin.js"
-    end: "\\}"
-    endCaptures:
-      "0":
-        name: "punctuation.section.scope.end.js"
+  js:
     patterns: [
       {
-        include: "source.js"
+        include: "#comment-line"
+      }
+      {
+        include: "#comment-block"
+      }
+      {
+        applyEndPatternLast: 1
+        begin: "\\{"
+        beginCaptures:
+          "0":
+            name: "punctuation.section.scope.begin.js"
+        end: "\\}"
+        endCaptures:
+          "0":
+            name: "punctuation.section.scope.end.js"
+        patterns: [
+          {
+            include: "#js"
+          }
+        ]
+      }
+      {
+        include: "#expression"
+      }
+      {
+        match: "\\b(break|case|catch|continue|default|do|else|export|finally|for|if|return|switch|throw|try|while|with|import|from|await|async)\\b"
+        name: "keyword.control.js"
+      }
+      {
+        match: "\\b(let|var)\\b"
+        name: "storage.type.var.js"
+      }
+      {
+        match: "(\\s+|\\b)(\\=\\>)(\\s+|\\b)"
+        name: "storage.type.function.arrow.js"
+      }
+      {
+        match: "\\;"
+        name: "punctuation.terminator.statement.js"
+      }
+      {
+        match: "\\b(function)\\b"
+        name: "storage.type.function.js"
+      }
+      {
+        match: "\\b(class)\\b"
+        name: "entity.name.type.class.js"
+      }
+      {
+        match: "\\bextends\\b"
+        name: "entity.other.inherited-class.js"
+      }
+      {
+        match: "console|JSON"
+        name: "entity.name.type"
+      }
+      {
+        begin: "([\\p{L}\\p{Nl}$_][\\p{L}\\p{Nl}$\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\x{200C}\\x{200D}]*)\\s*(\\()(?=(?:[^\\(\\)]*)?\\)\\s*\\{)"
+        beginCaptures:
+          "1":
+            name: "entity.name.function.js"
+          "2":
+            name: "punctuation.definition.parameters.begin.js"
+        end: "\\)"
+        endCaptures:
+          "0":
+            name: "punctuation.definition.parameters.END.js"
+        name: "meta.method.js"
+      }
+    ]
+  "js-code-block":
+    applyEndPatternLast: 1
+    begin: "^\\s*([$])\\s"
+    beginCaptures:
+      "1":
+        name: "storage.modifier.embedded.js"
+    contentName: "source.js.embedded"
+    end: "(?=\\n)"
+    patterns: [
+      {
+        include: "#js"
       }
     ]
   "open-tag-end":
@@ -589,6 +679,9 @@ repository:
         include: "#tag-html"
       }
       {
+        include: "#js-code-block"
+      }
+      {
         include: "#placeholder-patterns"
       }
       {
@@ -607,7 +700,7 @@ repository:
         include: "#placeholder-patterns"
       }
       {
-        include: "source.js"
+        include: "#js"
       }
     ]
   "open-tag-end-style":
@@ -630,7 +723,7 @@ repository:
     begin: "[$][!]?\\{"
     captures:
       "0":
-        name: "keyword.operator.js"
+        name: "keyword.operator.marko"
     comment: "${ } placeholder note: should be punctuation.section.embedded.js"
     end: "\\}"
     name: "meta.section.marko-placeholder"
@@ -666,7 +759,39 @@ repository:
     end: "%>"
     patterns: [
       {
-        include: "source.js"
+        include: "#js"
+      }
+    ]
+  "special-js-tags":
+    applyEndPatternLast: 1
+    begin: "^\\s*(?:(class)|(static)|(import))\\s"
+    beginCaptures:
+      "1":
+        name: "storage.type.class.js"
+      "2":
+        name: "storage.modifier.marko"
+      "3":
+        name: "storage.modifier.marko"
+    contentName: "source.js.embedded"
+    end: "(?=\\n)"
+    patterns: [
+      {
+        include: "#js"
+      }
+    ]
+  "style-block":
+    applyEndPatternLast: 1
+    begin: "\\{"
+    beginCaptures:
+      "0":
+        name: "punctuation.section.scope.begin.js"
+    end: "\\}"
+    endCaptures:
+      "0":
+        name: "punctuation.section.scope.end.js"
+    patterns: [
+      {
+        include: "source.css"
       }
     ]
   "tag-concise":
@@ -715,7 +840,7 @@ repository:
       "3":
         name: "entity.other.attribute-name.shorthand"
     comment: "A concise tag name"
-    end: "$"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "#html-line-concise"
@@ -731,7 +856,7 @@ repository:
       "1":
         name: "support.function.marko-tag.concise"
     comment: "A concise custom tag name"
-    end: "$"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "#html-line-concise"
@@ -744,20 +869,20 @@ repository:
     begin: "(<)(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]*|[@][a-zA-Z0-9_]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "2":
-        name: "support.function.marko-tag.open.html"
+        name: "support.function.tag.open.html"
     comment: "The beginning of a custom/special HTML tag"
     end: "(</)(\\2)?(>)|(/>)"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.close.html"
+        name: "punctuation.definition.tag.begin.close.html"
       "2":
-        name: "support.function.marko-tag.close.html"
+        name: "support.function.tag.close.html"
       "3":
-        name: "punctuation.definition.marko-tag.end.close.html"
+        name: "punctuation.definition.tag.end.close.html"
       "4":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
         include: "#attr-stuff-html"
@@ -770,20 +895,20 @@ repository:
     begin: "(<)([a-zA-Z0-9]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "2":
         name: "entity.name.tag.open.html"
     comment: "The beginning of a regular HTML tag in non-concise mode"
     end: "(</)(\\2)?(>)|(/>)"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.close.html"
+        name: "punctuation.definition.tag.begin.close.html"
       "2":
         name: "entity.name.tag.close.html"
       "3":
-        name: "punctuation.definition.marko-tag.end.close.html"
+        name: "punctuation.definition.tag.end.close.html"
       "4":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
         include: "#attr-stuff-html"
@@ -796,14 +921,14 @@ repository:
     begin: "(<)(base|br|col|hr|embed|img|input|keygen|link|meta|param|source|track|wbr|lasso-img)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "2":
         name: "entity.name.tag.open.html"
     comment: "HTML tags that are open tag only"
     end: "(>|/>)"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
         include: "#attr-stuff-html"
@@ -813,20 +938,20 @@ repository:
     begin: "(<)(script)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "2":
         name: "entity.name.tag.script.open.html"
     comment: "HTML style tag"
     end: "(</)(script)?(>)|/>"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.close.html"
+        name: "punctuation.definition.tag.begin.close.html"
       "2":
         name: "entity.name.tag.script.close.html"
       "3":
-        name: "punctuation.definition.marko-tag.end.close.html"
+        name: "punctuation.definition.tag.end.close.html"
       "4":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
         include: "#attr-stuff-html"
@@ -839,7 +964,7 @@ repository:
     begin: "(<)(([a-zA-Z0-9_-]+)([#.][a-zA-Z0-9_#.:-]+))(?=(>|/>|\\s+(?![=])|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "3":
         name: "entity.name.tag.open.html"
       "4":
@@ -848,15 +973,15 @@ repository:
     end: "(</)((\\3)(\\4)?)?(>)|(/>)"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.close.html"
+        name: "punctuation.definition.tag.begin.close.html"
       "3":
         name: "entity.name.tag.close.html"
       "4":
         name: "entity.other.attribute-name.shorthand"
       "5":
-        name: "punctuation.definition.marko-tag.end.close.html"
+        name: "punctuation.definition.tag.end.close.html"
       "6":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
         include: "#attr-stuff-html"
@@ -869,20 +994,20 @@ repository:
     begin: "(<)([#.][a-zA-Z0-9_#.:-]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "2":
         name: "entity.other.attribute-name.shorthand"
     comment: "HTML style tag"
     end: "(</)(\\2|div)(>)|(/>)"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.close.html"
+        name: "punctuation.definition.tag.begin.close.html"
       "2":
         name: "entity.name.tag.close.html"
       "3":
-        name: "punctuation.definition.marko-tag.end.close.html"
+        name: "punctuation.definition.tag.end.close.html"
       "4":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
         include: "#attr-stuff-html"
@@ -895,21 +1020,24 @@ repository:
     begin: "(<)(style)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
+        name: "punctuation.definition.tag.begin.open.html"
       "2":
         name: "entity.name.tag.style.open.html"
     comment: "HTML style tag"
     end: "(</)(style)?(>)|(/>)"
     endCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.begin.close.html"
+        name: "punctuation.definition.tag.begin.close.html"
       "2":
         name: "entity.name.tag.style.close.html"
       "3":
-        name: "punctuation.definition.marko-tag.end.close.html"
+        name: "punctuation.definition.tag.end.close.html"
       "4":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
+        name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
+      {
+        include: "#style-block"
+      }
       {
         include: "#attr-stuff-html"
       }
@@ -923,16 +1051,16 @@ repository:
     end: "(\\1)[.]*$"
     patterns: [
       {
-        include: "source.js"
+        include: "#js"
       }
     ]
   "tag-script-body-line":
-    begin: "\\s-\\s"
+    begin: "\\s--\\s"
     comment: "HTML script tag with nested JavaScript code"
-    end: "$"
+    end: "(?-$)"
     patterns: [
       {
-        include: "source.js"
+        include: "#js"
       }
     ]
   "tag-script-concise":
@@ -957,7 +1085,7 @@ repository:
     ]
   "tag-style-body-block":
     begin: "(\\s*[-][-]+)"
-    comment: "HTML script tag with nested JavaScript code"
+    comment: "HTML script tag with nested CSS code"
     end: "(\\1)[.]*$"
     patterns: [
       {
@@ -967,7 +1095,7 @@ repository:
   "tag-style-body-line":
     begin: "\\s[-][-]+\\s"
     comment: "HTML style tag with nested CSS code"
-    end: "$"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "source.css"
@@ -983,6 +1111,9 @@ repository:
     end: "^(?!(\\1\\s)|\\s*$)"
     name: "meta.tag.other"
     patterns: [
+      {
+        include: "#style-block"
+      }
       {
         include: "#attr-stuff-concise"
       }
