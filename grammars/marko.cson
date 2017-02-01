@@ -885,7 +885,7 @@ repository:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
       "2":
-        name: "support.function.tag.open.html"
+        name: "support.function.marko-tag.open.html"
     comment: "The beginning of a custom/special HTML tag"
     end: "(</)(\\2)?(>)|(/>)"
     endCaptures:

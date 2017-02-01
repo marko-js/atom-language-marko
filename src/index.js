@@ -83,6 +83,14 @@ module.exports = {
                 let filePath = target.dataset.path;
                 markoPrettyprint.prettyPrintFile(filePath);
             });
+
+        return Promise.resolve()
+            .then(() => {
+                return require('atom-package-deps').install('language-marko');
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     },
 
     deactivate() {
