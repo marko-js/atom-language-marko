@@ -647,11 +647,11 @@ repository:
         name: "entity.other.inherited-class.js"
       }
       {
-        match: "console|JSON"
+        match: "\\b(console|JSON)\\b"
         name: "entity.name.type"
       }
       {
-        match: "this|arguments"
+        match: "\\b(this|arguments)\\b"
         name: "variable.language.js"
       }
       {
@@ -685,7 +685,7 @@ repository:
     begin: "(>)"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.end.open.html"
+        name: "punctuation.definition.tag.end.open.html"
     comment: "Concise style tag with CSS code."
     end: "(?=</)"
     patterns: [
@@ -696,6 +696,9 @@ repository:
         include: "#comment-html"
       }
       {
+        include: "#scriptlet"
+      }
+      {
         include: "#tag-html"
       }
       {
@@ -704,15 +707,12 @@ repository:
       {
         include: "#placeholder-patterns"
       }
-      {
-        include: "#scriptlet"
-      }
     ]
   "open-tag-end-script":
     begin: "(>)"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.end.open.html"
+        name: "punctuation.definition.tag.end.open.html"
     comment: "Concise style tag with CSS code."
     end: "(?=</)"
     patterns: [
@@ -727,7 +727,7 @@ repository:
     begin: "(>)"
     beginCaptures:
       "1":
-        name: "punctuation.definition.marko-tag.end.open.html"
+        name: "punctuation.definition.tag.end.open.html"
     comment: "Concise style tag with CSS code."
     end: "(?=</)"
     patterns: [
@@ -771,6 +771,7 @@ repository:
       }
     ]
   scriptlet:
+    applyEndPatternLast: 1
     begin: "<%"
     captures:
       "0":
