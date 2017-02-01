@@ -13,6 +13,9 @@ patterns: [
     include: "#js-code-block"
   }
   {
+    include: "#component-style"
+  }
+  {
     include: "#comment-concise-line"
   }
   {
@@ -48,47 +51,8 @@ patterns: [
   {
     include: "#placeholder-patterns"
   }
-  {
-    include: "#assignment-html"
-  }
-  {
-    include: "#assignment-concise"
-  }
 ]
 repository:
-  "assignment-concise":
-    applyEndPatternLast: 1
-    begin: "^\\s*[$_A-Za-z]+"
-    beginCaptures: {}
-    comment: "A concise JavaScript assignment line"
-    end: "(?=\\n)"
-    patterns: [
-      {
-        include: "#html-line-concise"
-      }
-      {
-        include: "#attr-stuff-concise"
-      }
-    ]
-  "assignment-html":
-    applyEndPatternLast: 1
-    begin: "(<)"
-    beginCaptures:
-      "1":
-        name: "punctuation.definition.marko-tag.begin.open.html"
-    comment: "An HTML JavaScript assignment tag"
-    end: "(/>)"
-    endCaptures:
-      "1":
-        name: "punctuation.definition.marko-tag.end.self-close.html"
-    patterns: [
-      {
-        include: "#html-line-concise"
-      }
-      {
-        include: "#attr-stuff-concise"
-      }
-    ]
   "attr-assignment-concise":
     applyEndPatternLast: 1
     begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
@@ -304,6 +268,53 @@ repository:
         name: "punctuation.definition.comment.js"
     end: "(?=\\n)"
     name: "comment.line.double-slash.js"
+  "component-style":
+    patterns: [
+      {
+        include: "#component-style-less"
+      }
+      {
+        include: "#component-style-css"
+      }
+    ]
+  "component-style-css":
+    applyEndPatternLast: 1
+    begin: "^(style)(?:\\.([a-z]+))?\\s+(\\{)"
+    beginCaptures:
+      "1":
+        name: "storage.type.marko.css"
+      "2":
+        name: "storage.modifier.marko.less"
+      "3":
+        name: "punctuation.section.scope.begin.css"
+    end: "\\}"
+    endCaptures:
+      "0":
+        name: "punctuation.section.scope.end.css"
+    patterns: [
+      {
+        include: "source.css"
+      }
+    ]
+  "component-style-less":
+    applyEndPatternLast: 1
+    begin: "^(style)\\.(less)\\s+(\\{)"
+    beginCaptures:
+      "1":
+        name: "storage.type.marko.less"
+      "2":
+        name: "storage.modifier.marko.less"
+      "3":
+        name: "punctuation.section.scope.begin.less"
+    end: "\\}"
+    endCaptures:
+      "0":
+        name: "punctuation.section.scope.end.less"
+    patterns: [
+      {
+        include: "source.css.less"
+      }
+    ]
   doctype:
     begin: "<!"
     captures:
@@ -800,21 +811,6 @@ repository:
         include: "#js"
       }
     ]
-  "style-block":
-    applyEndPatternLast: 1
-    begin: "\\{"
-    beginCaptures:
-      "0":
-        name: "punctuation.section.scope.begin.js"
-    end: "\\}"
-    endCaptures:
-      "0":
-        name: "punctuation.section.scope.end.js"
-    patterns: [
-      {
-        include: "source.css"
-      }
-    ]
   "tag-concise":
     patterns: [
       {
@@ -847,9 +843,6 @@ repository:
       }
       {
         include: "#tag-name-html"
-      }
-      {
-        include: "#assignment-html"
       }
     ]
   "tag-name-concise":
@@ -1057,9 +1050,6 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
-        include: "#style-block"
-      }
-      {
         include: "#attr-stuff-html"
       }
       {
@@ -1130,11 +1120,8 @@ repository:
         name: "entity.name.tag.style.marko.concise"
     comment: "style tag with CSS code."
     end: "^(?!(\\1\\s)|\\s*$)"
-    name: "meta.tag.other"
+    name: "meta.tag.other.style"
     patterns: [
-      {
-        include: "#style-block"
-      }
       {
         include: "#attr-stuff-concise"
       }
