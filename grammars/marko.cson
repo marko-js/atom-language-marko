@@ -892,7 +892,7 @@ repository:
       "1":
         name: "punctuation.definition.tag.begin.close.html"
       "2":
-        name: "support.function.tag.close.html"
+        name: "support.function.marko-tag.close.html"
       "3":
         name: "punctuation.definition.tag.end.close.html"
       "4":
