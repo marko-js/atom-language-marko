@@ -385,6 +385,21 @@ repository:
         include: "#expression-operator-special"
       }
       {
+        match: "[.]([\\p{L}\\p{Nl}$_][\\p{L}\\p{Nl}$\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\x{200C}\\x{200D}]*)\\b"
+      }
+      {
+        captures:
+          "1":
+            name: "entity.name.type"
+          "2":
+            name: "entity.name.type"
+        match: "\\b(out)[.](global)\\b"
+      }
+      {
+        match: "\\b(input|state|JSON|out)\\b"
+        name: "entity.name.type"
+      }
+      {
         include: "#expression-special-class"
       }
     ]
@@ -484,8 +499,8 @@ repository:
         name: "keyword.operator.js"
     match: "(\\s+|\\b)(>=|>>|>)(\\s+|\\b)"
   "expression-operator-special":
-    match: "(?<!\\.|\\$)\\b(delete|in|instanceof|new|typeof\\s*|void|with)\\b(?!\\$)"
-    name: "keyword.operator.js"
+    match: "(?<!\\.|\\$)\\b(delete|in|instanceof|new|typeof\\s*|void|with|from|to|step)\\b(?!\\$)"
+    name: "keyword"
   "expression-operator-unary":
     match: "\\b(!|\\+\\+)\\b|\\b\\-\\-(?<!\\s)"
     name: "keyword.operator.js"
@@ -627,6 +642,25 @@ repository:
         ]
       }
       {
+        applyEndPatternLast: 1
+        begin: "\\["
+        beginCaptures:
+          "0":
+            name: "punctuation.section.scope.begin.js"
+        end: "\\]"
+        endCaptures:
+          "0":
+            name: "punctuation.section.scope.end.js"
+        patterns: [
+          {
+            include: "#js"
+          }
+        ]
+      }
+      {
+        match: "[.]([\\p{L}\\p{Nl}$_][\\p{L}\\p{Nl}$\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\x{200C}\\x{200D}]*)\\b"
+      }
+      {
         include: "#expression"
       }
       {
@@ -658,7 +692,15 @@ repository:
         name: "entity.other.inherited-class.js"
       }
       {
-        match: "\\b(console|JSON)\\b"
+        captures:
+          "1":
+            name: "entity.name.type"
+          "2":
+            name: "entity.name.type"
+        match: "\\b(require)[.](resolve)\\b"
+      }
+      {
+        match: "\\b(console|JSON|event|window|setTimeout|setInterval|require)\\b"
         name: "entity.name.type"
       }
       {
