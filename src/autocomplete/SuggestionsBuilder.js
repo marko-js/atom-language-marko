@@ -35,32 +35,6 @@ function getDisplayTextForSnippet(snippet) {
     });
 }
 
-function getTagDocsURL(tagName) {
-    return "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/" + tagName;
-}
-
-function getLocalAttributeDocsURL(attrName, tagName) {
-    return getTagDocsURL(tagName) + "#attr-" + attrName;
-}
-
-function getGlobalAttributeDocsURL(attribute) {
-    return "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/" + attribute;
-}
-
-function isAllowedHtmlAttribute(htmlTagInfo, attributeName) {
-    let attributeNames = htmlTagInfo.attributes;
-    if (attributeNames) {
-        for (let i=0, length=attributeNames.length; i<length; i++) {
-            let curAttributeName = attributeNames[i];
-            if (curAttributeName === attributeName) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 function getTaglibLabel(taglibPath) {
     var rootPackage = lassoPackageRoot.getRootPackage(taglibPath);
     if (rootPackage) {
@@ -106,9 +80,8 @@ function SUGGESTION_COMPARATOR(a, b) {
 }
 
 class SuggestionsBuilder {
-    constructor(request, htmlTags) {
+    constructor(request) {
         ok(request, '"request" is required');
-        ok(htmlTags, '"htmlTags" is required');
         var inspector = new MarkoAutocompleteInspector(request);
 
         var inspected = this.inspected = inspector.inspect();
@@ -121,8 +94,6 @@ class SuggestionsBuilder {
         this.filePath = filePath;
 
         this.suggestions = [];
-
-        this.htmlTags = htmlTags;
 
         this._taglibLookup = undefined;
 
@@ -250,14 +221,6 @@ class SuggestionsBuilder {
                 }
             });
         }
-
-        var htmlTags = this.htmlTags && this.htmlTags.tags;
-        for (var tagName in htmlTags) {
-            if (this.shouldAllowSuggestion(tagName)) {
-                var tagInfo = htmlTags[tagName];
-                this.addHtmlTagSuggestion(tagName, tagInfo, inspected);
-            }
-        }
     }
 
     addAttributeSuggestions(inspected) {
@@ -266,8 +229,6 @@ class SuggestionsBuilder {
         if (!tagName) {
             return;
         }
-
-        var htmlTags = this.htmlTags;
 
         var markoMajorVersion = this.markoMajorVersion;
         if (markoMajorVersion == null || markoMajorVersion >= 3) {
@@ -281,96 +242,27 @@ class SuggestionsBuilder {
                 }
             });
         }
-
-        let htmlTagInfo = this.htmlTags && htmlTags.tags[tagName];
-        if (htmlTagInfo) {
-            let attributes = htmlTagInfo.attributes;
-            if (attributes && attributes.length) {
-                attributes.forEach((attrName) => {
-                    if (this.shouldAllowSuggestion(attrName)) {
-                        let attrInfo = htmlTags[attrName] || {};
-                        this.addHtmlAttrSuggestion(attrName, attrInfo, inspected);
-                    }
-                });
-            }
-
-            for (let attrName in htmlTags.attributes) {
-                if (this.shouldAllowSuggestion(attrName)) {
-                    let attrInfo = htmlTags.attributes[attrName];
-                    if (attrInfo.global) {
-                        this.addHtmlAttrSuggestion(attrName, attrInfo, inspected);
-                    }
-                }
-            }
-        }
     }
 
-    getHtmlAttributeValueOptions(tagName, attributeName) {
-        var htmlTags = this.htmlTags;
-
-        // First see if the tag name corresponds to a standard HTML tag...
-        let htmlTagInfo = htmlTags.tags && htmlTags.tags[tagName];
-        if (htmlTagInfo) {
-            if (htmlTagInfo.attributeOptions && htmlTagInfo.attributeOptions[attributeName]) {
-                return htmlTagInfo.attributeOptions[attributeName];
-            }
-
-            let attrInfo = htmlTags.attributes[attributeName];
-            if (attrInfo) {
-                // See if the attribute has provided value options
-                let attribOptions = attrInfo.attribOption;
-                if (attribOptions) {
-                    // Make sure the attribute is supported by the HTML tag...
-                    if (attrInfo.global || isAllowedHtmlAttribute(htmlTagInfo, attributeName)) {
-                        return attribOptions;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
 
     addAttributeValueSuggestions(inspected) {
         var tagName = inspected.tagName;
         var attributeName = inspected.attributeName;
 
-
-        this.taglibLookup.forEachAttribute(tagName, (attr, tag) => {
-            if (attr.enum) {
-                attr.enum.forEach((valueOption) => {
-                    if (typeof valueOption === 'string') {
-                        valueOption = {
-                            value: valueOption
-                        };
-                    }
-
-                    this.addSuggestion(Object.assign({
-                        text: valueOption.value,
-                        type: 'value'
-                    }, valueOption));
-                });
-            }
-
-        });
-
-        if (inspected.attributeValueType === 'string') {
-            let attributeValueOptions = this.getHtmlAttributeValueOptions(tagName, attributeName);
-            if (attributeValueOptions) {
-                attributeValueOptions.forEach((attrValueOption) => {
-                    let suggestion = {
-                        type: 'value'
+        var attr = this.taglibLookup.getAttribute(tagName, attributeName);
+        if (attr && attr.enum) {
+            attr.enum.forEach((valueOption) => {
+                if (typeof valueOption === 'string') {
+                    valueOption = {
+                        value: valueOption
                     };
+                }
 
-                    if (typeof attrValueOption === 'string') {
-                        suggestion.text = attrValueOption;
-                    } else {
-                        Object.assign(suggestion, attrValueOption);
-                    }
-
-                    this.addSuggestion(suggestion);
-                });
-            }
+                this.addSuggestion(Object.assign({
+                    text: valueOption.value,
+                    type: 'value'
+                }, valueOption));
+            });
         }
     }
 
@@ -423,7 +315,7 @@ class SuggestionsBuilder {
             sortText: tagName,
             displayText: tagName,
             type: 'tag',
-            description: "Custom Marko <" + tagName + "> tag"
+            description: tag.html ? "HTML <" + tagName + "> tag" : "Custom Marko <" + tagName + "> tag"
         };
 
         var taglibPath = tag.taglibId || tag.taglibPath;
@@ -450,44 +342,6 @@ class SuggestionsBuilder {
         }
     }
 
-    addHtmlTagSuggestion(tagName, tagInfo, inspected) {
-        var suggestion = {
-            text: tagName,
-            displayText: tagName,
-            sortText: tagName,
-            type: 'tag',
-            description: "HTML <" + tagName + "> tag",
-            descriptionMoreURL: this.getTagDocsURL(tagName),
-            replacementPrefix: inspected.prefix
-        };
-
-        let autocomplete = tagInfo.autocomplete;
-
-        if (autocomplete) {
-            this.addTagAutocompleteSuggestions(autocomplete, suggestion, tagName, tagInfo.openTagOnly);
-            return;
-        }
-
-        if (inspected.completionType === completionType.TAG_START) {
-            if (inspected.shouldCompleteEndingTag) {
-                if (inspected.concise !== true) {
-                    if (tagInfo.openTagOnly) {
-                        suggestion.snippet = tagName + '${1} />';
-                    } else {
-                        suggestion.snippet = tagName + '${1}>${2}</' + tagName + '>';
-                    }
-                }
-
-            }
-        } else {
-            if (inspected.shouldCompleteEndingTag) {
-                suggestion.text += '>';
-            }
-        }
-
-        this.addSuggestion(suggestion);
-    }
-
     addCustomAttrSuggestion(attr, tag, inspected) {
         let attrName = attr.name;
 
@@ -495,7 +349,7 @@ class SuggestionsBuilder {
             text: attrName,
             displayText: attrName,
             type: 'attribute',
-            description: "Custom Marko attribute: " + attrName,
+            description: attr.html ? "HTML attribute: " + attrName : "Custom Marko attribute: " + attrName,
             sortPriority: tag.name === '*' ? SORT_PRIORITY_GLOBAL : SORT_PRIORITY_LOCAL,
             leftLabel: attr.type
         };
@@ -550,44 +404,6 @@ class SuggestionsBuilder {
 
             this.addSuggestion(suggestion);
         }
-    }
-
-    addHtmlAttrSuggestion(attrName, attrInfo, inspected) {
-
-        let tagName = inspected.tagName;
-        let isGlobal = !!attrInfo.global;
-
-        let suggestion = {
-            displayText: attrName,
-            type: 'attribute'
-        };
-
-        if (inspected.shouldCompleteAttributeValue !== false) {
-            suggestion.snippet = attrName + "=\"$1\"$2";
-
-            if (attrInfo.attribOption) {
-                suggestion.triggerAutocomplete = true;
-            }
-        } else {
-            suggestion.text = attrName;
-        }
-
-        if (isGlobal) {
-            suggestion.descriptionMoreURL = getGlobalAttributeDocsURL(attrName, tagName);
-            suggestion.description = "Global " + attrName + " attribute";
-            suggestion.sortPriority = SORT_PRIORITY_GLOBAL;
-        } else {
-            suggestion.descriptionMoreURL = getLocalAttributeDocsURL(attrName, tagName);
-            suggestion.description = attrName + " attribute local to <" + tagName + "> tags";
-            suggestion.rightLabel = "<" + tagName + ">";
-            suggestion.sortPriority = SORT_PRIORITY_LOCAL;
-        }
-
-
-
-        suggestion.sortText = attrName;
-
-        this.addSuggestion(suggestion);
     }
 
     getTagDocsURL(tag) {
