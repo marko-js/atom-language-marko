@@ -1159,9 +1159,9 @@ repository:
       }
     ]
   "tag-script-body-line":
-    begin: "\\s--\\s"
+    begin: "\\s+-[-]+\\s"
     comment: "HTML script tag with nested JavaScript code"
-    end: "(?-$)"
+    end: "(?=\\n)"
     patterns: [
       {
         include: "#js"
@@ -1175,7 +1175,6 @@ repository:
         name: "entity.name.tag.script.marko.concise"
     comment: "HTML script tag with nested JavaScript code"
     end: "^(?!(\\1\\s)|\\s*$)"
-    name: "meta.tag.other"
     patterns: [
       {
         include: "#attr-stuff-concise"
