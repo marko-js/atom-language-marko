@@ -407,11 +407,11 @@ repository:
         match: "\\b(this)[.](input|state)\\b"
       }
       {
-        match: "\\b(input|state|JSON|out)\\b"
+        match: "\\b(input|state|component|JSON|out)\\b"
         name: "entity.name.type"
       }
       {
-        match: "\\b(let|var)\\b"
+        match: "\\b(let|var|const)\\b"
         name: "storage.type.var.js"
       }
       {
