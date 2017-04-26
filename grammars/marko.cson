@@ -132,6 +132,11 @@ repository:
         include: "#comment-block"
       }
     ]
+  "attr-special":
+    captures:
+      "1":
+        name: "support.function.marko-attribute"
+    match: "\\s+(else)\\b"
   "attr-stuff-concise":
     patterns: [
       {
@@ -179,6 +184,9 @@ repository:
     patterns: [
       {
         include: "#comment-block"
+      }
+      {
+        include: "#attr-special"
       }
       {
         include: "#attr-with-arg"
@@ -652,6 +660,27 @@ repository:
         include: "#placeholder-patterns"
       }
     ]
+  "html-line-block-concise":
+    applyEndPatternLast: 1
+    begin: "\\s*([-][-]+)\\n"
+    beginCaptures:
+      "1":
+        name: "keyword.operator.marko.blah"
+    end: "(?!\\2)|(\\2\\1)"
+    patterns: [
+      {
+        include: "#cdata"
+      }
+      {
+        include: "#tag-html"
+      }
+      {
+        include: "#comment-html"
+      }
+      {
+        include: "#placeholder-patterns"
+      }
+    ]
   "html-line-concise":
     begin: "\\s*([-][-]+)"
     beginCaptures:
@@ -950,6 +979,9 @@ repository:
     end: "(?=\\n)"
     patterns: [
       {
+        include: "#html-line-block-concise"
+      }
+      {
         include: "#html-line-concise"
       }
       {
@@ -958,7 +990,7 @@ repository:
     ]
   "tag-name-custom-concise":
     applyEndPatternLast: 1
-    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*|[@][a-zA-Z0-9_]+)(?=(\\s+(?![=])|$|[(]))"
+    begin: "^\\s*(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+([:-])[a-zA-Z0-9_:-]*|[@][a-zA-Z0-9_-]+)(?=(\\s+(?![=])|$|[(]))"
     beginCaptures:
       "1":
         name: "support.function.marko-tag.concise"
@@ -973,7 +1005,7 @@ repository:
       }
     ]
   "tag-name-custom-html":
-    begin: "(<)(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]*|[@][a-zA-Z0-9_]+)(?=(>|/>|\\s|\\())"
+    begin: "(<)(for|if|unless|else-if|else|var|assign|macro|invoke|include|app|await|[a-zA-Z0-9_]+[-:][a-zA-Z0-9\\-_:]*|[@][a-zA-Z0-9_-]+)(?=(>|/>|\\s|\\())"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
