@@ -70,7 +70,7 @@ The package provides a [hyperclick](https://github.com/facebooknuclideapm/hyperc
 
 ## Clickable custom tags
 
-![Clickable custom tags](https://cloud.githubusercontent.com/assets/978214/16811041/c373be0a-48e3-11e6-8eb1-72481086cab9.gif)
+![Clickable custom tags](https://cloud.githubusercontent.com/assets/978214/26456738/d8228204-4122-11e7-8850-044f750fa2a4.gif)
 
 ## Clickable custom attributes
 
