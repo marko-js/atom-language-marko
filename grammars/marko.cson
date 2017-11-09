@@ -78,13 +78,13 @@ repository:
     begin: "(?:\\s+|[,])(?:(ref)|([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z0-9-]*)|([_a-zA-Z0-9][a-zA-Z0-9:_.-]*))\\s*([=])\\s*"
     beginCaptures:
       "1":
-        name: "support.function.marko-attribute"
+        name: "entity.other.attribute-name.html"
       "2":
         name: "entity.other.attribute-name.html"
       "3":
         name: "entity.other.attribute-name.html"
       "4":
-        name: "support.function.marko-attribute"
+        name: "entity.other.attribute-name.html"
       "5":
         name: "punctuation.separator.key-value.html"
     end: "(?=[,;]|\\s|/>|>)"
@@ -115,7 +115,7 @@ repository:
       "2":
         name: "entity.other.attribute-name.html"
       "3":
-        name: "support.function.marko-attribute"
+        name: "entity.other.attribute-name.html"
     match: "\\s+(?:([a-zA-Z][a-zA-Z]*)|(data-[a-zA-Z0-9-]*)|([a-zA-Z0-9][a-zA-Z0-9:_.-]+))(?=\\s|/>|>|$)"
   "attr-semicolon":
     applyEndPatternLast: 1
@@ -503,7 +503,7 @@ repository:
       }
     ]
   "expression-hex":
-    match: "\\b0[xX]\\h+\\b"
+    match: "\\b0[xX][0-9A-Fa-f]+\\b"
     name: "constant.numeric.hex.js"
   "expression-no-gt":
     comment: "A JavaScript expression"
@@ -558,7 +558,7 @@ repository:
     name: "string.quoted.double.js"
     patterns: [
       {
-        match: "\\\\(x\\h{2}|[0-2][0-7]{0,2}|3[0-6][0-7]|37[0-7]?|[4-7][0-7]?|.)"
+        match: "\\\\(x[0-9A-Fa-f]{2}|[0-2][0-7]{0,2}|3[0-6][0-7]|37[0-7]?|[4-7][0-7]?|.)"
         name: "constant.character.escape.js"
       }
       {
@@ -568,7 +568,7 @@ repository:
   "expression-string-escapes":
     patterns: [
       {
-        match: "\\\\(x\\h{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)"
+        match: "\\\\(x[0-9A-Fa-f]{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)"
         name: "constant.character.escape.js"
       }
     ]
