@@ -1020,7 +1020,7 @@ repository:
     ]
   "tag-name-concise":
     applyEndPatternLast: 1
-    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_.#-]*)?)(?=(\\s+(?![=])|$|\\())"
+    begin: "^\\s*(([a-zA-Z0-9_-]+)([.#][a-zA-Z0-9_.#-]*)?)(?=(\\s+(?![=])|$|\\(|\\|))"
     beginCaptures:
       "1":
         name: "entity.name.tag.concise"
@@ -1029,6 +1029,9 @@ repository:
     comment: "A concise tag name"
     end: "(?=\\n)"
     patterns: [
+      {
+        include: "#tag-params"
+      }
       {
         include: "#html-line-block-concise"
       }
@@ -1041,13 +1044,16 @@ repository:
     ]
   "tag-name-custom-concise":
     applyEndPatternLast: 1
-    begin: "^\\s*(for|if|unless|while|else-if|else|var|assign|macro|invoke|include|await|[a-zA-Z0-9_]+([:])[a-zA-Z0-9_:-]*|[@][a-zA-Z0-9_-]+)(?=(\\s+(?![=])|$|[(]))"
+    begin: "^\\s*(for|if|unless|while|else-if|else|var|assign|macro|invoke|include|await|[a-zA-Z0-9_]+([:])[a-zA-Z0-9_:-]*|[@][a-zA-Z0-9_-]+)(?=(\\s+(?![=])|$|[(]|\\|))"
     beginCaptures:
       "1":
         name: "support.function.marko-tag.concise"
     comment: "A concise custom tag name"
     end: "(?=\\n)"
     patterns: [
+      {
+        include: "#tag-params"
+      }
       {
         include: "#html-line-concise"
       }
@@ -1056,7 +1062,7 @@ repository:
       }
     ]
   "tag-name-custom-html":
-    begin: "(<)(for|if|unless|while|else-if|else|var|assign|macro|invoke|include|await|[a-zA-Z0-9_]+[:][a-zA-Z0-9\\-_:]*|[@][a-zA-Z0-9_-]+)(?=(>|/>|\\s|\\())"
+    begin: "(<)(for|if|unless|while|else-if|else|var|assign|macro|invoke|include|await|[a-zA-Z0-9_]+[:][a-zA-Z0-9\\-_:]*|[@][a-zA-Z0-9_-]+)(?=(>|/>|\\s|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1075,6 +1081,9 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
@@ -1089,6 +1098,9 @@ repository:
     patterns: [
       {
         include: "#placeholder"
+      }
+      {
+        include: "#tag-params"
       }
       {
         include: "#html-line-concise"
@@ -1118,6 +1130,9 @@ repository:
         include: "#placeholder"
       }
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
@@ -1125,7 +1140,7 @@ repository:
       }
     ]
   "tag-name-html":
-    begin: "(<)([a-zA-Z0-9-]+)(?=(>|/>|\\s|\\())"
+    begin: "(<)([a-zA-Z0-9-]+)(?=(>|/>|\\s|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1144,6 +1159,9 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
@@ -1151,7 +1169,7 @@ repository:
       }
     ]
   "tag-name-open-tag-only-html":
-    begin: "(<)(base|br|col|hr|embed|img|input|keygen|link|meta|param|source|track|wbr|lasso-img)(?=(>|/>|\\s|\\())"
+    begin: "(<)(base|br|col|hr|embed|img|input|keygen|link|meta|param|source|track|wbr|lasso-img)(?=(>|/>|\\s|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1164,11 +1182,14 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
     ]
   "tag-name-script-html":
-    begin: "(<)(script)(?=(>|/>|\\s|\\())"
+    begin: "(<)(script)(?=(>|/>|\\s|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1187,6 +1208,9 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
@@ -1194,7 +1218,7 @@ repository:
       }
     ]
   "tag-name-shorthand-html":
-    begin: "(<)(([a-zA-Z0-9_-]+)([#.][a-zA-Z0-9_#.:-]+))(?=(>|/>|\\s+(?![=])|\\())"
+    begin: "(<)(([a-zA-Z0-9_-]+)([#.][a-zA-Z0-9_#.:-]+))(?=(>|/>|\\s+(?![=])|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1217,6 +1241,9 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
@@ -1224,7 +1251,7 @@ repository:
       }
     ]
   "tag-name-shorthand-no-tag-name-html":
-    begin: "(<)([#.][a-zA-Z0-9_#.:-]+)(?=(>|/>|\\s|\\())"
+    begin: "(<)([#.][a-zA-Z0-9_#.:-]+)(?=(>|/>|\\s|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1243,6 +1270,9 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
@@ -1250,7 +1280,7 @@ repository:
       }
     ]
   "tag-name-style-html":
-    begin: "(<)(style)(?=(>|/>|\\s|\\())"
+    begin: "(<)(style)(?=(>|/>|\\s|\\(|\\|))"
     beginCaptures:
       "1":
         name: "punctuation.definition.tag.begin.open.html"
@@ -1269,10 +1299,28 @@ repository:
         name: "punctuation.definition.tag.end.self-close.html"
     patterns: [
       {
+        include: "#tag-params"
+      }
+      {
         include: "#attr-stuff-html"
       }
       {
         include: "#open-tag-end-style"
+      }
+    ]
+  "tag-params":
+    applyEndPatternLast: 0
+    begin: "\\|"
+    beginCaptures:
+      "0":
+        name: "meta.pipe.js"
+    end: "\\|"
+    endCaptures:
+      "0":
+        name: "meta.pipe.js"
+    patterns: [
+      {
+        include: "#expression"
       }
     ]
   "tag-script-body-block":
