@@ -23,8 +23,7 @@
   "dependencies": {
     "@marko/language-server": "^0.5.0",
     "atom-languageclient": "^1.0.6",
-    "atom-package-deps": "^7.2.0",
-    "tslib": "^2.1.0"
+    "atom-package-deps": "^7.2.0"
   },
   "engines": {
     "atom": ">=1.21.0"
@@ -42,7 +41,7 @@
     "templating"
   ],
   "license": "MIT",
-  "main": "./dist/index.js",
+  "main": "./src/index.js",
   "package-deps": [
     "atom-ide-ui"
   ],
@@ -72,8 +71,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/marko-js/atom-language-marko/"
-  },
-  "scripts": {
-    "postinstall": "rm -rf ../../node_modules/atom-languageclient/build/lib/main.d.ts"
   }
 }

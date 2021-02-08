@@ -1,9 +1,9 @@
-import { AutoLanguageClient, LanguageServerProcess } from "atom-languageclient";
-import { install } from "atom-package-deps";
+const { AutoLanguageClient } = require("atom-languageclient");
+const { install } = require("atom-package-deps");
 
-export = new (class MarkoLanguageClient extends AutoLanguageClient {
+module.exports = new (class MarkoLanguageClient extends AutoLanguageClient {
   getConnectionType() {
-    return "ipc" as const;
+    return "ipc";
   }
   getGrammarScopes() {
     return ["text.marko"];
@@ -16,15 +16,15 @@ export = new (class MarkoLanguageClient extends AutoLanguageClient {
   }
   preInitialization(connection) {
     connection.onCustom('$/displayError', msg => {
-      (window as any).atom.notifications.addError(msg);
+      atom.notifications.addError(msg);
     });
 
     connection.onCustom('$/displayWarning', msg => {
-      (window as any).atom.notifications.addWarning(msg);
+      atom.notifications.addWarning(msg);
     });
 
     connection.onCustom('$/displayInfo', msg => {
-      (window as any).atom.notifications.addInfo(msg);
+      atom.notifications.addInfo(msg);
     });
   }
   provideAutocomplete() {
@@ -39,7 +39,7 @@ export = new (class MarkoLanguageClient extends AutoLanguageClient {
         {
           stdio: [null, null, null, "ipc"],
         }
-      ) as LanguageServerProcess,
+      ),
       install("language-marko", true)
     ]);
 

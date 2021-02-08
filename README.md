@@ -1,8 +1,6 @@
 # Marko Atom
 
-Marko tooling for Atom, powered by [marko-language-server](../../tree/master/server).
-
-> _NOTE_: For developing this plugin it is best to work from https://github.com/marko-js/language-server
+Marko tooling for Atom, powered by [@marko/language-server](https://github.com/marko-js/language-server).
 
 # License
 

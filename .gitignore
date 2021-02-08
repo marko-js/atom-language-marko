@@ -8,9 +8,6 @@
 # NPM
 node_modules
 
-# Build
-dist
-
 # Logging
 *.log
 
