@@ -71,7 +71,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/marko-js/language-server/tree/master/clients/atom/"
+    "url": "https://github.com/marko-js/atom-language-marko/"
   },
   "scripts": {
     "postinstall": "rm -rf ../../node_modules/atom-languageclient/build/lib/main.d.ts"
