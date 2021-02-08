@@ -1,45 +1,79 @@
 {
   "name": "language-marko",
-  "version": "2.10.0",
-  "description": "Syntax highlighting for the Marko templating language",
-  "repository": "https://github.com/marko-js/atom-language-marko",
-  "license": "MIT",
-  "engines": {
-    "atom": ">0.50.0"
-  },
-  "dependencies": {
-    "atom-package-deps": "^4.3.1",
-    "escape-string-regexp": "^1.0.5",
-    "fuzzaldrin-plus": "^0.4.1",
-    "lasso-package-root": "^1.0.0",
-    "marko": "^4.0.0-rc.13",
-    "marko-prettyprint": "^1.3.0",
-    "raptor-async": "^1.1.3",
-    "resolve-from": "^3.0.0"
-  },
-  "main": "src/index.js",
-  "providedServices": {
-    "autocomplete.provider": {
+  "description": "Marko Tooling for Atom",
+  "version": "3.0.0",
+  "bugs": "https://github.com/marko-js/language-server/issues/new?template=Bug_report.md",
+  "consumedServices": {
+    "console": {
       "versions": {
-        "2.0.0": "getAutocompleteProvider"
+        "0.1.0": "consumeConsole"
       }
     },
-    "hyperclick.provider": {
+    "datatip": {
       "versions": {
-        "0.0.0": "getHyperclickProvider"
+        "0.1.0": "consumeDatatipService"
+      }
+    },
+    "linter-indie": {
+      "versions": {
+        "2.0.0": "consumeLinterV2"
       }
     }
   },
-  "keywords": [
-    "marko",
-    "html",
-    "template",
-    "templating",
-    "autocomplete",
-    "hyperclick",
-    "tags"
+  "dependencies": {
+    "@marko/language-server": "^0.5.0",
+    "atom-languageclient": "^1.0.6",
+    "atom-package-deps": "^7.2.0",
+    "tslib": "^2.1.0"
+  },
+  "engines": {
+    "atom": ">=1.21.0"
+  },
+  "enhancedScopes": [
+    "text.marko"
   ],
+  "homepage": "https://github.com/marko-js/language-server/tree/master/clients/atom/README.md",
+  "keywords": [
+    "autocomplete",
+    "marko",
+    "syntax",
+    "tags",
+    "template",
+    "templating"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.js",
   "package-deps": [
-    "hyperclick"
-  ]
+    "atom-ide-ui"
+  ],
+  "private": true,
+  "providedServices": {
+    "hyperclick": {
+      "versions": {
+        "0.1.0": "provideHyperclick"
+      }
+    },
+    "autocomplete.provider": {
+      "versions": {
+        "2.0.0": "provideAutocomplete"
+      }
+    },
+    "code-format.range": {
+      "versions": {
+        "0.1.0": "provideCodeFormat"
+      }
+    },
+    "definitions": {
+      "versions": {
+        "0.1.0": "provideDefinitions"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/language-server/tree/master/clients/atom/"
+  },
+  "scripts": {
+    "postinstall": "rm -rf ../../node_modules/atom-languageclient/build/lib/main.d.ts"
+  }
 }
